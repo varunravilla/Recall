@@ -2,66 +2,119 @@
 
 Screenshots should come back when they become useful, not just become easier to find.
 
-People screenshot restaurants, events, and products because saving is almost effortless. The screenshot keeps what was on the screen and loses why it was saved. Recall treats a new screenshot as the start of a small intention: interpret it, let the user confirm, then bring it back when it matters.
+P2 MVP: log in → Photos permission → collect caption → propose → confirm → track → remind → sweep → complete.
 
-The full design writeup is in [P1.md](P1.md).
+## Startup guide
 
-## How it works
+### Prerequisites
 
-Recall is limited to events, places, and products. It does not buy tickets, book restaurants, or complete purchases.
+- [Bun](https://bun.sh) (`bun --version`)
+- [Podman](https://podman.io) + Compose ([MongoDB setup guide](https://61040.github.io/fa26/resources/mongodb-setup/))
 
-1. **Capturing.** New screenshots stay available without being organized first.
-2. **Interpreting.** Recall proposes a kind, a summary, and an optional relevant time. The user confirms, edits, or ignores that suggestion.
-3. **Tracking.** A confirmed item stays pending until the user marks it complete or dismisses it.
-4. **Reminding.** If the item has a relevant time, Recall brings it back then.
+### 1. Environment
 
-## Screens
+```sh
+cp .env.example .env
+bun install
+```
 
-| Screen | File |
+`.env` uses `mongodb://dev:dev@127.0.0.1:27017/recall?authSource=admin` (matches `compose.yaml`).
+
+### 2. Podman + MongoDB
+
+On macOS, after a reboot or if containers fail:
+
+```sh
+podman machine start
+```
+
+If you see **connection refused** to the Podman socket while the machine says “already running”:
+
+```sh
+podman machine stop
+podman machine start
+```
+
+If storage errors persist (disk was full, corrupted overlay), reset the VM (removes container volumes inside Podman):
+
+```sh
+podman machine stop
+podman machine rm
+podman machine init
+podman machine start
+```
+
+Start MongoDB and wait until it accepts connections:
+
+```sh
+bun run db:up
+```
+
+Useful commands:
+
+| Command | Purpose |
 | --- | --- |
-| Photos permission | [design_images/permission.png](design_images/permission.png) |
-| Action Inbox | [design_images/inbox.png](design_images/inbox.png) |
-| Review a suggested action | [design_images/review.png](design_images/review.png) |
-| Pending saved item | [design_images/pending.png](design_images/pending.png) |
-| Reminder brought back | [design_images/reminder.png](design_images/reminder.png) |
-| Completed item | [design_images/completed.png](design_images/completed.png) |
+| `bun run db:check` | Ping MongoDB |
+| `bun run db:logs` | Container logs |
+| `bun run db:reset` | Wipe data and restart |
+| `bun run db:shell` | `mongosh` as `dev` |
 
-### Photos permission
+Port **27017** must be free. Another MongoDB or container can block it (`lsof -i :27017`).
 
-Recall asks for photo access so it can detect new screenshots. Access is optional; the user can skip it.
+### 3. Run the app
 
-![Photos permission](design_images/permission.png)
+```sh
+bun run dev
+```
 
-### Action Inbox
+- **API:** http://127.0.0.1:3000 (`/health`, `/api/...`)
+- **UI:** http://localhost:5173 (Vite proxies `/api` to the backend)
 
-The inbox shows screenshots Recall thinks are actionable, each with a suggested interpretation. The user reviews or ignores each one.
+Or run pieces separately:
 
-![Action Inbox](design_images/inbox.png)
+```sh
+bun run db:up
+bun run dev:backend   # port 3000
+bun run dev:frontend  # port 5173
+```
 
-### Review
+### 4. Verify
 
-Recognition is a suggestion. Before Recall relies on it, the user confirms the type, title, action, and relevant time, or edits those details.
+```sh
+bun run check:design
+bun run generate
+bun run check
+bun test              # needs `bun run db:up` first
+bun run test:memory   # no Podman; good for CI / broken Podman
+```
 
-![Review suggested action](design_images/review.png)
+Optional end-to-end script (backend must be running):
 
-### Pending item
+```sh
+bun scripts/try-journey.ts
+```
 
-A saved item records whether the intention is still open, what the user wants to do, and when it should return.
+### Core journey (demo)
 
-![Pending saved item](design_images/pending.png)
+1. Open http://localhost:5173 — **log in**, **Allow Photos access** (web demo).
+2. **Add** — paste a concert/ticket caption (simulates a detected screenshot).
+3. **Review** → **Confirm** (~1 minute reminder).
+4. **Inbox** polls sweep; when due, open saved item → **Mark complete**.
 
-### Reminder
+Add your screen recording URL in [P2.md](P2.md).
 
-When the relevant time arrives, the item returns to the Action Inbox and a notification explains why it was saved.
+## Project layout
 
-![Reminder brought back](design_images/reminder.png)
+| Path | Role |
+| --- | --- |
+| [P1.md](P1.md) | P1 design narrative |
+| [design_images/](design_images/) | UI sketches (P1) |
+| [design/](design/) | sync-engine specs |
+| [src/](src/) | Backend concepts + compositions |
+| [frontend/](frontend/) | Vue 3 + Vite UI |
+| [P2.md](P2.md) | P2 journey + demo link |
 
-### Completed item
+## Course
 
-Marking an item complete ends the intention and cancels further reminders. The history stays visible, and the item can be reopened.
-
-![Completed item](design_images/completed.png)
-
-## Example
-
-Maya screenshots a concert post while walking to class. Tickets go on sale Friday at 10 AM. Later, Recall suggests “Buy tickets” with that time. She confirms it. On Friday morning the item returns to her inbox, she buys the tickets, and marks the intention complete.
+- [P2 assignment](https://61040.github.io/fa26/assignments/p2/)
+- [sync-engine local dev](https://61040.github.io/fa26/resources/sync-engine-local-dev/)

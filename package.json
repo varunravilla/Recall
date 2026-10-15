@@ -1,0 +1,42 @@
+{
+  "private": true,
+  "type": "module",
+  "packageManager": "bun@1.3.4",
+  "overrides": {
+    "bson": "7.2.0"
+  },
+  "dependencies": {
+    "@mit-sdg/sync-engine": "1.1.0",
+    "@mit-sdg/sync-engine-http": "1.1.0",
+    "mongodb": "7.7.0"
+  },
+  "devDependencies": {
+    "@types/bun": "^1.3.4",
+    "@types/node": "^24.0.0",
+    "@vitejs/plugin-vue": "^6.0.10",
+    "mongodb-memory-server": "^11.3.0",
+    "typescript": ">=6 <7",
+    "vite": "^8.3.4",
+    "vue": "^3.5.44",
+    "vue-router": "^5.4.0"
+  },
+  "scripts": {
+    "generate": "sync-engine artifacts pin",
+    "check": "sync-engine check && sync-engine artifacts check && tsc --noEmit",
+    "check:design": "sync-engine check-design design/concepts/*.md design/types.md design/compositions/*.md",
+    "start": "bun run --parallel start:backend start:frontend",
+    "start:backend": "bun src/main.ts",
+    "start:frontend": "bun run --cwd frontend dev",
+    "dev": "bun run db:up && bun run --parallel dev:backend dev:frontend",
+    "dev:backend": "bun --watch src/main.ts",
+    "dev:frontend": "bun run --cwd frontend dev",
+    "db:up": "podman compose up -d mongo && bun scripts/check-db.ts --wait",
+    "db:down": "podman compose down",
+    "db:reset": "podman compose down -v && bun run db:up",
+    "db:logs": "podman compose logs mongo",
+    "db:shell": "podman compose exec mongo mongosh -u dev -p dev",
+    "db:check": "bun scripts/check-db.ts",
+    "test": "bun test",
+    "test:memory": "TEST_MONGO=memory bun test"
+  }
+}
