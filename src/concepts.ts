@@ -1,3 +1,5 @@
+import authenticatingSpec from "@design/concepts/Authenticating.md" with { type: "text" };
+import { AuthenticatingConcept, InvalidCredentials, AccountExists } from "./concepts/Authenticating.ts";
 import { conceptSet, registerConcept } from "@mit-sdg/sync-engine/assembly";
 import collectingSpec from "@design/concepts/Collecting.md" with { type: "text" };
 import interpretingSpec from "@design/concepts/Interpreting.md" with { type: "text" };
@@ -70,6 +72,7 @@ const reminding = registerConcept({
 });
 
 export const applicationConceptSet = conceptSet({
+  Authenticating: registerConcept({ class: AuthenticatingConcept, spec: authenticatingSpec, refusals: { INVALID_CREDENTIALS: InvalidCredentials, ACCOUNT_EXISTS: AccountExists } }),
   Sessioning: sessioning,
   Collecting: collecting,
   Interpreting: interpreting,

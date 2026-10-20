@@ -1,22 +1,22 @@
-# Agent guide — Recall (6.1040 P2)
+# Agent guide — Recall (6.1040 P3)
 
-**Repo state:** P2 MVP. See [README.md](README.md#startup-guide) to run locally.
+**Repo state:** P3 beta. See [README.md](README.md#startup-guide) to run locally.
 
 ## Read first
 
 1. [README.md](README.md)
 2. [P1.md](P1.md) — design narrative + UI sketch links
-3. [P2.md](P2.md) — user journey + demo URL
+3. [P3.md](P3.md) — current user journey and scope; P2.md is historical
 4. [design/](design/) — sync-engine specs (edit here; run `bun run check:design`)
 
 ## Course links
 
-- P2: https://61040.github.io/fa26/assignments/p2/
+- P3: https://61040.github.io/fa26/assignments/p3/
 - sync-engine: https://61040.github.io/fa26/resources/sync-engine-local-dev/
 
 ## Product rules (P1)
 
-Events, places, products only — no automated purchase/booking. Flow: collect → propose interpretation → confirm → track → remind → complete/dismiss. UI reference: `design_images/` (see P1.md).
+Events, places, products only — no automated purchase/booking. Dated flow: collect → propose → confirm → track → remind → complete/dismiss. Undated finds are saved without tracking or reminders. UI reference: `design_images/` (see P1.md).
 
 ## Design → code
 
@@ -43,10 +43,11 @@ bun run dev
 - UI: http://localhost:5173 (proxies `/api`)
 - `bun run check`, `bun test`, `bun run db:reset`
 
-## Five concepts
+## Six concepts
 
 | Concept | Storage |
 | --- | --- |
+| Authenticating | Mongo accounts; Argon2id password hashes |
 | Sessioning | In-memory, 30min TTL |
 | Collecting | Mongo; includes **content** caption |
 | Interpreting | Mongo; item = **collection** id |
@@ -57,7 +58,8 @@ bun run dev
 
 - `sessionStorage` session id; send `session` in JSON body (not cookies).
 - `fetch` in `frontend/src/api.ts` — do not bundle sync-engine client.
-- Client `recognizeCaption`; inbox polls `/recall/sweep/tick`.
+- All readable new photos use server AI analysis. There is no local OCR/filter mode. Found items have null relevantAt.
+- Photo import uses server Gemini analysis via multipart `/recall/photos/import`; persisted images use authenticated POST `/recall/photos/image`. Legacy text capture helpers remain for compatibility. Inbox polls `/recall/sweep/tick`.
 
 ## Backend
 
@@ -77,6 +79,7 @@ bun run dev
 
 `P1.md`, `design_images/`, `design/`, `P2.md`, `README.md`, `AGENTS.md`
 
-## Submit
+## Current documentation
 
-Commit hash, `P2.md` demo URL, passing check + test.
+See P3.md for the beta journey and limits, docs/validation/ for saved checks,
+and docs/deployment.md for production setup.

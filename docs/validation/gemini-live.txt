@@ -1,0 +1,12 @@
+Gemini live validation — 2026-10-18
+Latest outcome: PASS with gemini-3.5-flash-lite.
+
+See gemini-live.json for real caption, action, reminder and expiration output.
+See photos-live.json for the complete multipart → Gemini → composition → MongoDB check:
+- Future concert added with generated fields and persisted image.
+- Duplicate image recognized without adding another collection.
+- Expired concert skipped, leaving exactly one saved item.
+
+Only synthetic fixtures were transmitted; no personal photos or API keys appear in these records.
+
+Earlier diagnostics found an invalid inherited key masking the replacement .env key and a model no longer available to new users. Local configuration precedence and the model default were corrected. A daylight-saving discrepancy prompted server-side IANA conversion of Gemini's local wall times; the successful result uses 14:55 UTC for 09:55 New York on November 1, 2026.

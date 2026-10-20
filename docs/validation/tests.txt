@@ -1,0 +1,104 @@
+Recall P3 validation
+Run: 2026-10-19T17:51:17.217Z
+Command: bun run test:memory
+Exit: 0
+
+bun test v1.4.2 (744846f84)
+$ TEST_MONGO=memory bun test
+
+tests/frontend/import.test.ts:
+(pass) photo selection accepts image formats and rejects empty, oversized or non-image files [1.26ms]
+(pass) large source images are prepared small enough for a ten-photo request [3.11ms]
+
+tests/frontend/import-pipeline.test.ts:
+(pass) prepares one batch ahead during AI and sends batches in order [0.94ms]
+(pass) pause finishes the active request and restores prefetched files [0.20ms]
+(pass) a failed request restores current and prefetched batches without discarding photos [0.79ms]
+(pass) pause during quota wait sends nothing and restores already prepared photos [0.10ms]
+
+tests/compositions/security.test.ts:
+(pass) two accounts cannot read, revise, confirm, or reject each other's items using mismatched IDs [500.72ms]
+
+tests/compositions/confirm-flow.test.ts:
+(pass) confirm chains track and schedule [306.86ms]
+
+tests/compositions/delete-flow.test.ts:
+(pass) delete is owner-only and removes images plus every historical interpretation, tracking and reminder [520.84ms]
+
+tests/http/journey.test.ts:
+(pass) HTTP journey: validation, register, capture, edit, confirm, reschedule, persistence, dismiss, logout [595.30ms]
+
+tests/concepts/reminding.test.ts:
+(pass) sweepDue marks scheduled reminders as due [68.83ms]
+(pass) reschedule, due, acknowledge, and invalid transitions preserve state [49.94ms]
+(pass) cancelled reminder never surfaces in a later sweep [45.53ms]
+(pass) removeItem deletes every status for one owner and item only [40.46ms]
+
+tests/concepts/sessioning.test.ts:
+(pass) session principle: start, resolve, expire without changing subject [0.56ms]
+(pass) logout revokes exactly one session and repeated logout fails [0.10ms]
+
+tests/concepts/interpreting.test.ts:
+(pass) propose then confirm updates status [55.77ms]
+(pass) revise only works while proposed [31.89ms]
+(pass) confirm after reject is refused [30.22ms]
+(pass) terminal interpretations refuse revision, rejection and repeated confirmation without changes [30.96ms]
+(pass) remove deletes one interpretation in any state and is idempotent [34.36ms]
+(pass) absent dates remain null instead of becoming the creation timestamp [31.06ms]
+
+tests/concepts/tracking.test.ts:
+(pass) track then complete resolves pending item [58.62ms]
+(pass) duplicate pending track is refused [32.56ms]
+(pass) dismiss, unauthorized actions, and repeated resolution [34.55ms]
+(pass) remove requires ownership, handles resolved rows, and preserves other trackings [35.87ms]
+
+tests/concepts/collecting.test.ts:
+(pass) add stores a caption for the owner [65.05ms]
+(pass) empty content is refused [30.60ms]
+(pass) duplicate item for same user is refused [29.70ms]
+(pass) remove enforces ownership and leaves state unchanged on failure [34.34ms]
+(pass) photo action validates its own input, persists privately, and refuses duplicates without replacement [40.49ms]
+
+tests/concepts/authenticating.test.ts:
+(pass) register and login retain identity across instances; passwords are hashed [717.91ms]
+(pass) invalid registration has no side effect [3.40ms]
+
+tests/photos/pacing.test.ts:
+(pass) configured RPM shares a request window; unknown quotas do not add a fixed delay [0.20ms]
+(pass) quota backoff honors provider hints, grows without them, and resets on success [0.06ms]
+
+tests/photos/import.test.ts:
+(pass) generated import persists caption, action, time and image; deduplicates before AI; survives restart and isolates owners [541.19ms]
+(pass) expired, irrelevant and uncertain photos write neither image nor collection [136.52ms]
+(pass) bad sessions, consent, timezone and forged files are rejected before inference; raw AddPhoto HTTP is blocked [135.00ms]
+(pass) provider quota failure leaves nothing stored and supplies retry guidance [133.54ms]
+(pass) deadline is checked again after slow inference [127.72ms]
+(pass) simultaneous uploads from one account cannot race duplicate creation [129.73ms]
+(pass) undated finds retain image and caption without a reminder or fabricated date [134.82ms]
+(pass) logout during inference writes neither a dated item nor an undated find [263.56ms]
+(pass) one batched AI call matches reversed results to source images and deduplicates within/across batches [263.76ms]
+(pass) batch rejects bad ids/count/consent before AI and refuses unmatched results before any writes [128.26ms]
+(pass) batch keeps per-image outcomes and rechecks authentication after inference [279.15ms]
+(pass) batch quota cooldown is shared across accounts and never discards input [248.01ms]
+(pass) ten distinct images share one request; oversized aggregate payloads never call AI [192.02ms]
+
+tests/photos/time.test.ts:
+(pass) server resolves daylight saving and fractional timezone offsets [2.29ms]
+(pass) ambiguous, nonexistent and invalid local times are refused [0.47ms]
+
+tests/photos/gemini.test.ts:
+(pass) filter rejects expired, irrelevant, uncertain, missing, invalid, past, and incoherent dates [0.14ms]
+(pass) strict response parser refuses malformed or unsupported AI output [0.09ms]
+(pass) Gemini receives image, server time, timezone, structured schema, and a server-only key [1.65ms]
+(pass) provider errors never expose key or raw response, and quota errors are retryable [1.07ms]
+(pass) undated useful finds are accepted without invented dates, expired items still skip [0.13ms]
+(pass) bad supplied wall times never turn into accepted undated finds [0.51ms]
+(pass) multi-image request uses explicit ids and parses reversed independent results [0.28ms]
+(pass) missing, duplicate, foreign ids and malformed analysis never match to the wrong image [0.14ms]
+(pass) provider retry hints support RetryInfo, not just numeric headers [0.18ms]
+(pass) provider supports ten independent photos and refuses an eleventh before sending [0.36ms]
+
+ 60 pass
+ 0 fail
+ 402 expect() calls
+Ran 60 tests across 16 files. [11.10s]

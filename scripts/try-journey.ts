@@ -3,7 +3,7 @@ import type { RecallWireHttp } from "../generated/wire.ts";
 
 const client = createHttpClient<RecallWireHttp>({ baseUrl: "http://127.0.0.1:3000/api" });
 
-const start = await client.recall.start({ user: "Maya" });
+const start = await client.recall.register({ username: `demo_${Date.now()}`, password: "demo-password-12345" });
 if ("error" in start) throw new Error(String(start.error));
 const { session } = start;
 
@@ -34,7 +34,7 @@ const confirm = await client.recall.review.confirm({
 if ("error" in confirm) throw new Error(String(confirm.error));
 console.log("Confirmed", confirm);
 
-const tick = await client.recall.sweep.tick({ now: new Date(Date.now() + 120_000).toISOString() });
+const tick = await client.recall.sweep.tick({ session });
 console.log("Sweep", tick);
 
 const inbox = await client.recall.inbox.list({ session });

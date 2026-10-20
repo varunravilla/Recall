@@ -1,3 +1,4 @@
+import { AuthenticatingConcept } from "./concepts/Authenticating.ts";
 import { assemble } from "@mit-sdg/sync-engine/assembly";
 import { composition as recallComposition } from "./compositions/Recall.ts";
 import { composition as sessionsComposition } from "./compositions/Sessions.ts";
@@ -13,6 +14,7 @@ export function assembleApplication() {
   return assemble({
     conceptSet: applicationConceptSet,
     instances: {
+      Authenticating: new AuthenticatingConcept(db),
       Sessioning: new SessioningConcept(),
       Collecting: new CollectingConcept(db),
       Interpreting: new InterpretingConcept(db),

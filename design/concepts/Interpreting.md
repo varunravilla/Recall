@@ -31,6 +31,13 @@ a set of Interpretations with
 ## Actions
 
 ```actions
+remove (interpretation: Interpretation) : returns (interpretation: Interpretation)
+  where true
+  then
+    delete interpretation if it exists
+    returns interpretation
+
+
 propose (item: Item, kind: String, summary: String, relevantAt?: DateTime) : returns (interpretation: Interpretation)
   where true
   then
@@ -68,9 +75,13 @@ reject (interpretation: Interpretation) : returns (interpretation: Interpretatio
 ## Queries
 
 ```queries
-_byItem (item: Item) : optional (interpretation: Interpretation, kind: String, summary: String, relevantAt: DateTime, status: String)
-  answers the latest interpretation for item if any
+_allByItem (item: Item) : many (interpretation: Interpretation)
+  answers every interpretation for item, including rejected and confirmed rows
 
-_byId (interpretation: Interpretation) : optional (item: Item, kind: String, summary: String, relevantAt: DateTime, status: String)
-  answers no row for an unknown interpretation
+
+_byItem (item: Item) : optional (interpretation: Interpretation, kind: String, summary: String, relevantAt: DateTime | null, status: String)
+  answers the latest interpretation for item if any; relevantAt is null when absent
+
+_byId (interpretation: Interpretation) : optional (item: Item, kind: String, summary: String, relevantAt: DateTime | null, status: String)
+  answers no row for an unknown interpretation; relevantAt is null when absent
 ```

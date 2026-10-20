@@ -1,4 +1,4 @@
-import { startSession } from "./api.ts";
+import { startSession, registerAccount, endSession } from "./api.ts";
 
 const SESSION_KEY = "recall.session";
 const USER_KEY = "recall.user";
@@ -30,24 +30,20 @@ export function revokePhotosAccess() {
 }
 
 export function clearSession() {
+  const session = getSession();
+  if (session) void endSession(session);
   sessionStorage.removeItem(SESSION_KEY);
   sessionStorage.removeItem(USER_KEY);
   sessionStorage.removeItem(PHOTOS_KEY);
 }
 
-/** Reuse session when the same name is already signed in this browser tab. */
-export async function ensureSession(user: string): Promise<{ session: string } | { error: string }> {
+/** Authenticate credentials before saving a new session in this tab. */
+export async function ensureSession(user: string, password: string, register = false): Promise<{ session: string } | { error: string }> {
   const trimmed = user.trim();
-  if (!trimmed) return { error: "Enter your name." };
-
-  const existingSession = getSession();
-  const existingUser = getUser();
-  if (existingSession && existingUser === trimmed) {
-    return { session: existingSession };
-  }
+  if (!trimmed) return { error: "Enter your username." };
 
   revokePhotosAccess();
-  const started = await startSession(trimmed);
+  const started = await (register ? registerAccount(trimmed, password) : startSession(trimmed, password));
   if ("error" in started) return { error: started.error };
   setSession(started.session, trimmed);
   return { session: started.session };

@@ -6,13 +6,14 @@ trackings attach to confirmed interpretations; reminders attach to trackings.
 
 ```types
 concrete ScreenshotRef
-  An opaque id standing in for a screenshot detected from Photos or pasted in the web MVP.
+  An opaque capture identity. Photo imports use the hash of optimized image bytes; Collecting stores the image and caption. Legacy text captures use a caller-supplied identity.
 
 concrete User
   The signed-in user subject stored in the session.
 ```
 
 ```instances
+instantiate Authenticating
 instantiate Sessioning with
   Subject is User
 

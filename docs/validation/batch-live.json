@@ -1,0 +1,25 @@
+{
+  "checkedAt": "2026-10-19T17:38:40.131Z",
+  "status": "PASS",
+  "model": "gemini-3.5-flash-lite",
+  "elapsedSeconds": 12.59,
+  "selectedPhotos": 3,
+  "uniqueImagesInOneGeminiRequest": 2,
+  "outcomes": [
+    {
+      "id": "future",
+      "status": "added"
+    },
+    {
+      "id": "expired",
+      "status": "skipped"
+    },
+    {
+      "id": "duplicate",
+      "status": "duplicate"
+    }
+  ],
+  "savedItemCount": 1,
+  "persistedImageMatches": true,
+  "note": "Real batch Gemini request + multipart adapter + authored compositions + disposable MongoDB. Synthetic fixtures only. This is not a comparative speed benchmark or browser journey."
+}

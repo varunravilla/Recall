@@ -1,0 +1,8 @@
+Recall P3 validation
+Run: 2026-10-19T17:51:02.777Z
+Command: bun run check
+Exit: 0
+
+Concept action/query source check passed for 6 concepts.
+Application diagnostic check passed with 23 advisories (use --show-advisories to list them).
+$ sync-engine check && sync-engine artifacts check && tsc --noEmit

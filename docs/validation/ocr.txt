@@ -1,0 +1,12 @@
+Historical result: local OCR was removed from the current app on October 19.
+
+Recall P3 OCR validation
+Date: 2026-10-19
+Command: bun frontend/scripts/check-ocr.ts
+Exit: 0
+
+PASS: tests/fixtures/future-concert.png passes real English OCR and the strict clue filter (210 characters).
+PASS: design_images/review.png passes real English OCR and the strict clue filter (329 characters).
+Elapsed: 1.98 seconds for two fixtures, including worker startup. Not a whole-library benchmark.
+
+This runs real OCR against repository fixtures. Browser file selection, worker asset loading in a browser, and mobile performance remain separate checks.

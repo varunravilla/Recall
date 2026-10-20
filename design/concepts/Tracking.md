@@ -31,6 +31,16 @@ a set of Trackings with
 ## Actions
 
 ```actions
+remove (user: User, tracking: Tracking) : returns (tracking: Tracking)
+  where tracking does not exist or user is not its owner
+  then
+    refuses NOT_OWNER "You do not own this tracking."
+  where tracking exists and user is its owner
+  then
+    delete tracking regardless of status
+    returns tracking
+
+
 track (user: User, item: Item) : returns (tracking: Tracking)
   where an active pending tracking already exists for this user and item
   then
@@ -68,6 +78,10 @@ dismiss (user: User, tracking: Tracking) : returns (tracking: Tracking)
 ## Queries
 
 ```queries
+_allByItem (item: Item) : many (tracking: Tracking, owner: User)
+  answers every tracking for item, including resolved rows
+
+
 _pending (user: User) : many (tracking: Tracking, item: Item)
   answers every tracking for user with status "pending"
 

@@ -1,0 +1,7 @@
+Recall P3 validation
+Run: 2026-10-19T17:50:54.692Z
+Command: bun run check:design
+Exit: 0
+
+Design form check passed for 9 files.
+$ sync-engine check-design design/concepts/*.md design/types.md design/compositions/*.md

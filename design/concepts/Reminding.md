@@ -32,6 +32,13 @@ a set of Reminders with
 ## Actions
 
 ```actions
+removeItem (user: User, item: Item) : returns (item: Item)
+  where true
+  then
+    delete every reminder for this owner and item regardless of status
+    returns item
+
+
 schedule (user: User, item: Item, at: DateTime) : returns (reminder: Reminder)
   where true
   then

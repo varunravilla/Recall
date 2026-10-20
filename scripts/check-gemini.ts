@@ -1,0 +1,11 @@
+import { geminiConfig } from "../src/photos/config.ts";
+import { createGeminiAnalyzer, exclusionReason } from "../src/photos/gemini.ts";
+const file = Bun.file(new URL("../tests/fixtures/future-concert.png", import.meta.url));
+const now = new Date();
+if (!geminiConfig().apiKey) throw new Error("GEMINI_API_KEY is missing. Add it to .env; never print or commit it.");
+const analysis = await createGeminiAnalyzer()({ imageData: Buffer.from(await file.arrayBuffer()).toString("base64"), mimeType: "image/png", now, timezone: "America/New_York" });
+const reason = exclusionReason(analysis, now);
+const report = { checkedAt: now.toISOString(), model: geminiConfig().model, fixture: "tests/fixtures/future-concert.png", status: reason ? "skipped" : "accepted", reason, analysis };
+await Bun.write("docs/validation/gemini-live.json", JSON.stringify(report, null, 2) + "\n");
+console.log(JSON.stringify(report, null, 2));
+if (reason || analysis.kind !== "event" || !/late train/i.test(analysis.caption)) process.exitCode = 1;

@@ -103,6 +103,11 @@ export class RemindingConcept {
     return { reminder };
   }
 
+  async removeItem({ user, item }: { user: string; item: string }) {
+    await this.reminders.deleteMany({ owner: user, item });
+    return { item };
+  }
+
   async _byItem({ user, item }: { user: string; item: string }) {
     await this.#ensureIndex();
     const row = await this.reminders.findOne(

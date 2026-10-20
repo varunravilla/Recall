@@ -1,15 +1,16 @@
 import { endpoint, receive, respond } from "@mit-sdg/sync-engine/boundary";
 import { concepts } from "../concepts.ts";
 
-const { Sessioning } = concepts;
+const { Sessioning, Authenticating } = concepts;
 
 const Start = endpoint(
   "/recall/start",
-  ({ user, session, expiresAt }) =>
-    receive({ user })
+  ({ username, password, user, session, expiresAt }) =>
+    receive({ username, password })
+      .then(Authenticating.login({ username, password }).responds({ user }))
       .then(Sessioning.start({ subject: user }).responds({ session, expiresAt }))
       .then(respond({ user, session, expiresAt })),
-  { input: { required: ["user"] } },
+  { input: { required: ["username", "password"] } },
 );
 
 const Current = endpoint(
@@ -21,4 +22,20 @@ const Current = endpoint(
   { input: { required: ["session"] } },
 );
 
-export const composition = { Start, Current };
+const Register = endpoint(
+  "/recall/register",
+  ({ username, password, user, session, expiresAt }) =>
+    receive({ username, password })
+      .then(Authenticating.register({ username, password }).responds({ user }))
+      .then(Sessioning.start({ subject: user }).responds({ session, expiresAt }))
+      .then(respond({ user, session, expiresAt })),
+  { input: { required: ["username", "password"] } },
+);
+const End = endpoint(
+  "/recall/end",
+  ({ session, ended }) => receive({ session })
+    .then(Sessioning.end({ session }).responds({ ended }))
+    .then(respond({ ended })),
+  { input: { required: ["session"] } },
+);
+export const composition = { Start, Register, Current, End };

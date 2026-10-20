@@ -74,6 +74,17 @@ export class TrackingConcept {
     return { tracking };
   }
 
+  async remove({ user, tracking }: { user: string; tracking: string }) {
+    const result = await this.trackings.deleteOne({ _id: tracking, owner: user });
+    if (!result.deletedCount) throw new NotOwner("You do not own this tracking.");
+    return { tracking };
+  }
+
+  async _allByItem({ item }: { item: string }) {
+    const rows = await this.trackings.find({ item }, { projection: { _id: 1, owner: 1 } }).toArray();
+    return rows.map(row => ({ tracking: row._id, owner: row.owner }));
+  }
+
   async _pending({ user }: { user: string }) {
     await this.#ensureIndex();
     const rows = await this.trackings.find({ owner: user, status: "pending" }).toArray();

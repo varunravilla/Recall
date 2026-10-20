@@ -1,0 +1,6 @@
+Recall P3 validation
+Run: 2026-10-19T17:51:05.521Z
+Command: bun run check:frontend
+Exit: 0
+
+$ vue-tsc --noEmit -p tsconfig.json

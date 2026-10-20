@@ -1,3 +1,4 @@
+import { decodeImage } from "../photos/image.ts";
 import { MongoServerError, type Collection, type Db } from "mongodb";
 
 export class EmptyContent extends Error {}
@@ -10,6 +11,8 @@ interface CollectionRow {
   item: string;
   content: string;
   collectedAt: Date;
+  imageData?: string;
+  mimeType?: string;
 }
 
 export class CollectingConcept {
@@ -59,6 +62,34 @@ export class CollectingConcept {
     return { collection };
   }
 
+  async addPhoto({ user, item, content, collectedAt, imageData, mimeType }: {
+    user: string; item: string; content: string; collectedAt: Date; imageData: string; mimeType: string;
+  }) {
+    if (!content.trim() || content.length > 20000 || !decodeImage(imageData, mimeType))
+      throw new EmptyContent("Caption or image is invalid.");
+    await this.#ensureIndex();
+    const collection = crypto.randomUUID();
+    try {
+      await this.collections.insertOne({ _id: collection, owner: user, item, content, collectedAt, imageData, mimeType });
+    } catch (error) {
+      if (error instanceof MongoServerError && error.code === 11000)
+        throw new AlreadyCollected("This item is already in the collection.");
+      throw error;
+    }
+    return { collection };
+  }
+
+  async _photo({ user, collection }: { user: string; collection: string }) {
+    const row = await this.collections.findOne({ _id: collection, owner: user }, { projection: { imageData: 1, mimeType: 1 } });
+    if (!row?.imageData || !row.mimeType) return [];
+    return [{ imageData: row.imageData, mimeType: row.mimeType }];
+  }
+
+  async _find({ user, item }: { user: string; item: string }) {
+    const row = await this.collections.findOne({ owner: user, item }, { projection: { _id: 1 } });
+    return row ? [{ collection: row._id }] : [];
+  }
+
   async remove({ user, collection }: { user: string; collection: string }) {
     await this.#ensureIndex();
     const result = await this.collections.deleteOne({ _id: collection, owner: user });
@@ -70,7 +101,7 @@ export class CollectingConcept {
 
   async _byOwner({ user }: { user: string }) {
     await this.#ensureIndex();
-    const rows = await this.collections.find({ owner: user }).sort({ collectedAt: 1 }).toArray();
+    const rows = await this.collections.find({ owner: user }, { projection: { imageData: 0, mimeType: 0 } }).sort({ collectedAt: 1 }).toArray();
     return rows.map(({ _id, item, content, collectedAt }) => ({
       collection: _id,
       item,
@@ -81,7 +112,7 @@ export class CollectingConcept {
 
   async _byId({ collection }: { collection: string }) {
     await this.#ensureIndex();
-    const row = await this.collections.findOne({ _id: collection });
+    const row = await this.collections.findOne({ _id: collection }, { projection: { imageData: 0, mimeType: 0 } });
     if (row === null) return [];
     return [
       {

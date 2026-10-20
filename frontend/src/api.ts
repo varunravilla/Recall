@@ -9,30 +9,36 @@ async function post<T>(path: string, body: Record<string, unknown>): Promise<Api
       body: JSON.stringify(body),
     });
   } catch {
-    return { error: "Could not reach the server. Is the backend running?" };
+    return { error: "Could not connect. Check your connection and try again." };
   }
 
   const text = await response.text();
   if (!text) {
-    return { error: "Empty response from server." };
+    return { error: "Something went wrong. Please try again." };
   }
 
   let data: unknown;
   try {
     data = JSON.parse(text);
   } catch {
-    return { error: "Invalid JSON from server." };
+    return { error: "Something went wrong. Please try again." };
   }
 
   if (!response.ok) {
-    const err = (data as { error?: string }).error ?? response.statusText;
-    return { error: err };
+    if (response.status === 401 && !["/recall/start", "/recall/register"].includes(path)) {
+      sessionStorage.removeItem("recall.session");
+      sessionStorage.removeItem("recall.user");
+      window.location.assign("/");
+      return { error: "Your session ended. Log in again." };
+    }
+    const err = (data as { error?: unknown }).error;
+    return { error: typeof err === "string" ? err : response.statusText };
   }
   return data as T;
 }
 
-export function startSession(user: string) {
-  return post<{ user: string; session: string; expiresAt: string }>("/recall/start", { user });
+export function startSession(username: string, password: string) {
+  return post<{ user: string; session: string; expiresAt: string }>("/recall/start", { username, password });
 }
 
 export function addCaption(payload: {
@@ -105,8 +111,8 @@ export function dismissSaved(session: string, collection: string, tracking: stri
   return post<{ tracking: string }>("/recall/saved/dismiss", { session, collection, tracking });
 }
 
-export function sweepTick(now: string) {
-  return post<{ count: number }>("/recall/sweep/tick", { now });
+export function sweepTick(session: string) {
+  return post<{ count: number }>("/recall/sweep/tick", { session });
 }
 
 export interface InboxBook {
@@ -131,7 +137,7 @@ export interface InterpretationRow {
   interpretation: string;
   kind: string;
   summary: string;
-  relevantAt: string;
+  relevantAt: string | null;
   status: string;
 }
 
@@ -177,7 +183,6 @@ export interface ReviewPayload {
   summary: string;
   relevantAt?: string;
   status: string;
-  error?: string;
 }
 
 export interface SavedItemDetail {
@@ -208,6 +213,7 @@ export function itemRoute(item: LibraryItem): { path: string; label: string } {
 
 export function itemStatusLabel(item: LibraryItem): string {
   const tracking = item.trackingRow?.status;
+  if (tracking === "pending" && item.reminderRow?.status === "due") return "Due now";
   if (tracking === "pending") return "Pending";
   if (tracking === "completed") return "Completed";
   if (tracking === "dismissed") return "Dismissed";
@@ -215,5 +221,21 @@ export function itemStatusLabel(item: LibraryItem): string {
   if (reminder === "due") return "Due now";
   if (item.interpretationRow?.status === "proposed") return "Suggested";
   if (item.interpretationRow?.status === "rejected") return "Ignored";
+  if (item.interpretationRow?.status === "confirmed" && !item.interpretationRow.relevantAt && !item.trackingRow) return "Found";
   return "Saved";
+}
+
+export function registerAccount(username: string, password: string) {
+  return post<{ user: string; session: string; expiresAt: string }>("/recall/register", { username, password });
+}
+export function endSession(session: string) {
+  return post<{ ended: boolean }>("/recall/end", { session });
+}
+
+export function rescheduleSaved(session: string, collection: string, tracking: string, at: string) {
+  return post<{ reminder: string; at: string }>("/recall/saved/reschedule", { session, collection, tracking, at });
+}
+
+export function deleteSaved(session: string, collection: string) {
+  return post<{ collection: string }>("/recall/saved/delete", { session, collection });
 }

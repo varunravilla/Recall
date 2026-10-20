@@ -94,6 +94,16 @@ export class InterpretingConcept {
     return { interpretation };
   }
 
+  async remove({ interpretation }: { interpretation: string }) {
+    await this.interpretations.deleteOne({ _id: interpretation });
+    return { interpretation };
+  }
+
+  async _allByItem({ item }: { item: string }) {
+    const rows = await this.interpretations.find({ item }, { projection: { _id: 1 } }).toArray();
+    return rows.map(row => ({ interpretation: row._id }));
+  }
+
   async _byItem({ item }: { item: string }) {
     await this.#ensureIndex();
     const row = await this.interpretations.findOne({ item }, { sort: { createdAt: -1 } });
@@ -103,7 +113,7 @@ export class InterpretingConcept {
         interpretation: row._id,
         kind: row.kind,
         summary: row.summary,
-        relevantAt: row.relevantAt ?? row.createdAt,
+        relevantAt: row.relevantAt ?? null,
         status: row.status,
       },
     ];
@@ -118,7 +128,7 @@ export class InterpretingConcept {
         item: row.item,
         kind: row.kind,
         summary: row.summary,
-        relevantAt: row.relevantAt ?? row.createdAt,
+        relevantAt: row.relevantAt ?? null,
         status: row.status,
       },
     ];

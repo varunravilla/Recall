@@ -1,3 +1,4 @@
+import { AuthenticatingConcept } from "../../src/concepts/Authenticating.ts";
 import { afterAll, beforeAll, expect, test } from "bun:test";
 import { assemble } from "@mit-sdg/sync-engine/assembly";
 import { createGateway } from "@mit-sdg/sync-engine/boundary";
@@ -25,6 +26,7 @@ test("confirm chains track and schedule", async () => {
   const application = assemble({
     conceptSet: applicationConceptSet,
     instances: {
+      Authenticating: new AuthenticatingConcept(testDb.db),
       Sessioning: new SessioningConcept(),
       Collecting: new CollectingConcept(testDb.db),
       Interpreting: new InterpretingConcept(testDb.db),
@@ -35,7 +37,7 @@ test("confirm chains track and schedule", async () => {
   });
   const gateway = createGateway({ application });
 
-  const start = await gateway.invoke("/recall/start", { user: "Maya" });
+  const start = await gateway.invoke("/recall/register", { username: "maya", password: "correct-horse-battery" });
   expect(start.ok).toBe(true);
   if (!start.ok) return;
   const session = (start.value as { session: string }).session;

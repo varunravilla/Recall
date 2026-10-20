@@ -1,0 +1,22 @@
+{
+  "checkedAt": "2026-10-18T20:07:03.130Z",
+  "model": "gemini-3.5-flash-lite",
+  "status": "PASS",
+  "futureImage": {
+    "status": "added",
+    "collection": "3855afda-81c0-4e88-bd18-4534b9780a65",
+    "interpretation": "719b5712-9f05-4858-976c-60a0d3852a61",
+    "caption": "The Late Train Live in Concert in Cambridge, Massachusetts on November 15, 2026. Tickets go on sale November 1, 2026.",
+    "summary": "Buy tickets for The Late Train concert",
+    "relevantAt": "2026-11-01T14:55:00.000Z",
+    "reason": "Upcoming concert with ticket sale date in the future."
+  },
+  "repeatedImage": "duplicate",
+  "expiredImage": {
+    "status": "skipped",
+    "reason": "The event took place on October 1, 2026, which is in the past."
+  },
+  "persistedImageBytes": 60647,
+  "savedItemCount": 1,
+  "note": "Real Gemini + multipart handler + authored compositions + temporary MongoDB. Synthetic images only; no personal photos or credentials in this record."
+}

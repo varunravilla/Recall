@@ -1,4 +1,7 @@
 <script setup lang="ts">
+import DeleteItemDialog from "../components/DeleteItemDialog.vue";
+import { deleteSaved } from "../api.ts";
+import SavedPhoto from "../components/SavedPhoto.vue";
 import { computed, onMounted, ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { confirmReview, getReview, rejectReview, reviseReview } from "../api.ts";
@@ -16,6 +19,8 @@ const relevantAtLocal = ref("");
 const interpretation = ref("");
 const content = ref("");
 const status = ref("");
+const confirmDelete = ref(false);
+const deleteError = ref("");
 
 function toLocalInput(iso: string): string {
   const d = new Date(iso);
@@ -38,10 +43,6 @@ onMounted(async () => {
     error.value = data.error;
     return;
   }
-  if (data.error) {
-    error.value = data.error;
-    return;
-  }
   kind.value = data.kind;
   summary.value = data.summary;
   relevantAtLocal.value = toLocalInput(data.relevantAt ?? new Date(Date.now() + 60_000).toISOString());
@@ -53,8 +54,14 @@ onMounted(async () => {
 async function confirm() {
   const session = getSession();
   if (!session) return;
+  if (!summary.value.trim() || !relevantAtLocal.value || !Number.isFinite(new Date(relevantAtLocal.value).getTime())) {
+    error.value = "Enter an action and a valid reminder time."; return;
+  }
   loading.value = true;
   const at = toIsoFromLocal(relevantAtLocal.value);
+  const edited = await reviseReview({ session, collection: collection.value,
+    interpretation: interpretation.value, kind: kind.value, summary: summary.value, relevantAt: at });
+  if ("error" in edited) { loading.value = false; error.value = edited.error; return; }
   const result = await confirmReview({
     session,
     collection: collection.value,
@@ -82,52 +89,44 @@ async function reject() {
   await router.push("/inbox");
 }
 
-async function saveEdits() {
-  const session = getSession();
-  if (!session) return;
-  loading.value = true;
-  const result = await reviseReview({
-    session,
-    collection: collection.value,
-    interpretation: interpretation.value,
-    kind: kind.value,
-    summary: summary.value,
-    relevantAt: toIsoFromLocal(relevantAtLocal.value),
-  });
+async function remove() {
+  const session = getSession(); if (!session || loading.value) return;
+  loading.value = true; deleteError.value = "";
+  const result = await deleteSaved(session, collection.value);
   loading.value = false;
-  if ("error" in result) {
-    error.value = result.error;
-  }
+  if ("error" in result) { deleteError.value = result.error; return; }
+  confirmDelete.value = false;
+  await router.push("/saved");
 }
 </script>
 
 <template>
-  <PageShell title="Review" show-back back-to="/inbox">
-    <p v-if="error" class="error">{{ error }}</p>
+  <PageShell title="Make it yours" show-back back-to="/inbox">
+    <p v-if="error" class="error" role="alert">{{ error }}</p>
     <section v-if="content" class="card preview-card">
-      <p class="field-label">Screenshot caption</p>
-      <p class="preview-text">{{ content }}</p>
+      <SavedPhoto :collection="collection" :caption="content" />
+      <details class="caption-details"><summary>Photo details</summary><p class="preview-text">{{ content }}</p></details>
     </section>
 
     <section v-if="content" class="card">
-      <p class="field-label">Recall found</p>
+      <span class="eyebrow">Suggested for you</span>
       <div class="field-row">
-        <span class="field-name">Type</span>
-        <input v-model="kind" />
+        <label for="kind" class="field-name">Type</label>
+        <select id="kind" v-model="kind"><option value="event">Event</option><option value="place">Place</option><option value="product">Product</option></select>
       </div>
       <div class="field-row">
-        <span class="field-name">Action</span>
-        <input v-model="summary" />
+        <label for="summary" class="field-name">Action</label>
+        <input id="summary" v-model="summary" />
       </div>
       <div class="field-row">
-        <span class="field-name">Relevant time</span>
-        <input v-model="relevantAtLocal" type="datetime-local" />
+        <label for="time" class="field-name">Relevant time</label>
+        <input id="time" v-model="relevantAtLocal" type="datetime-local" />
       </div>
-      <p class="muted">Status: {{ status }}</p>
-      <p class="fine-print">Recall can make mistakes. Confirm what you want to remember.</p>
-      <button class="btn-primary btn-block" :disabled="loading" @click="confirm">Confirm</button>
-      <button class="btn-secondary btn-block" :disabled="loading" @click="saveEdits">Edit details</button>
+      <p class="fine-print">Check the details. We’ll remind you when it’s time.</p>
+      <button class="btn-primary btn-block" :disabled="loading" @click="confirm">Save reminder</button>
       <button type="button" class="btn-text btn-block" :disabled="loading" @click="reject">Ignore</button>
     </section>
+    <button v-if="content" class="btn-delete delete-item-link" :disabled="loading" @click="confirmDelete = true; deleteError = ''">Delete item</button>
+    <DeleteItemDialog :open="confirmDelete" :title="summary || 'Saved item'" :busy="loading" :error="deleteError" @cancel="confirmDelete = false" @confirm="remove" />
   </PageShell>
 </template>

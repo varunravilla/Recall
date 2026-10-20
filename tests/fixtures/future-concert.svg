@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="900" viewBox="0 0 1200 900">
+<rect width="1200" height="900" fill="#1f3d36"/>
+<g fill="white" font-family="Arial, sans-serif" text-anchor="middle">
+<text x="600" y="160" font-size="68" font-weight="bold">THE LATE TRAIN</text>
+<text x="600" y="245" font-size="48">LIVE IN CONCERT</text>
+<text x="600" y="365" font-size="40">November 15, 2026 · 7 PM EST</text>
+<text x="600" y="435" font-size="36">Cambridge, Massachusetts</text>
+<text x="600" y="555" font-size="38">Tickets go on sale November 1, 2026</text>
+<text x="600" y="615" font-size="38">at 10 AM EST</text>
+<text x="600" y="725" font-size="32">Ticket sales close November 14, 2026 at 11 PM EST</text>
+<text x="600" y="820" font-size="24">Synthetic Recall integration-test fixture</text>
+</g></svg>

@@ -39,6 +39,15 @@ export type RecallWire = {
     };
     error: { error: AppWideError | "INVALID_INPUT" | "UNKNOWN_SESSION" };
   };
+  "/recall/end": {
+    input: {
+      "session": Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["Sessioning"]["end"]>[0], ["session"]>>;
+    };
+    output: {
+      "ended": Jsonify<AtPath<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["Sessioning"]["end"]>>, ["ended"]>>;
+    };
+    error: { error: AppWideError | "INVALID_INPUT" | "UNKNOWN_SESSION" };
+  };
   "/recall/inbox/list": {
     input: {
       "session": Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["Sessioning"]["current"]>[0], ["session"]>>;
@@ -80,36 +89,104 @@ export type RecallWire = {
     };
     output: {
       "book": {
-        "items": {
+        "items": ({
           "collectedAt": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["Collecting"]["_byOwner"]>>>, ["collectedAt"]>>;
           "collection": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["Collecting"]["_byOwner"]>>>, ["collection"]>>;
           "content": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["Collecting"]["_byOwner"]>>>, ["content"]>>;
           "interpretationRow": {
-            "interpretation": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["Interpreting"]["_byItem"]>>>, ["interpretation"]>>;
-            "kind": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["Interpreting"]["_byItem"]>>>, ["kind"]>>;
-            "relevantAt": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["Interpreting"]["_byItem"]>>>, ["relevantAt"]>>;
-            "status": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["Interpreting"]["_byItem"]>>>, ["status"]>>;
-            "summary": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["Interpreting"]["_byItem"]>>>, ["summary"]>>;
+            "interpretation": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["Interpreting"]["_byItem"]>>>, ["interpretation"]>> | null;
+            "kind": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["Interpreting"]["_byItem"]>>>, ["kind"]>> | null;
+            "relevantAt": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["Interpreting"]["_byItem"]>>>, ["relevantAt"]>> | null;
+            "status": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["Interpreting"]["_byItem"]>>>, ["status"]>> | null;
+            "summary": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["Interpreting"]["_byItem"]>>>, ["summary"]>> | null;
           };
           "reminderRow": {
-            "at": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["Reminding"]["_byItem"]>>>, ["at"]>>;
-            "reminder": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["Reminding"]["_byItem"]>>>, ["reminder"]>>;
-            "status": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["Reminding"]["_byItem"]>>>, ["status"]>>;
+            "at": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["Reminding"]["_byItem"]>>>, ["at"]>> | null;
+            "reminder": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["Reminding"]["_byItem"]>>>, ["reminder"]>> | null;
+            "status": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["Reminding"]["_byItem"]>>>, ["status"]>> | null;
           };
           "trackingRow": {
-            "status": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["Tracking"]["_byItem"]>>>, ["status"]>>;
-            "tracking": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["Tracking"]["_byItem"]>>>, ["tracking"]>>;
+            "status": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["Tracking"]["_byItem"]>>>, ["status"]>> | null;
+            "tracking": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["Tracking"]["_byItem"]>>>, ["tracking"]>> | null;
           };
-        }[];
+        })[];
       };
     };
     error: { error: AppWideError | "INVALID_INPUT" | "UNKNOWN_SESSION" };
+  };
+  "/recall/photos/add": {
+    input: {
+      "collectedAt": Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["Collecting"]["addPhoto"]>[0], ["collectedAt"]>>;
+      "content": Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["Collecting"]["addPhoto"]>[0], ["content"]>>;
+      "imageData": Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["Collecting"]["addPhoto"]>[0], ["imageData"]>>;
+      "item": Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["Collecting"]["addPhoto"]>[0], ["item"]>>;
+      "kind": Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["Interpreting"]["propose"]>[0], ["kind"]>>;
+      "mimeType": Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["Collecting"]["addPhoto"]>[0], ["mimeType"]>>;
+      "relevantAt": Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["Interpreting"]["propose"]>[0], ["relevantAt"]>>;
+      "session": Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["Sessioning"]["current"]>[0], ["session"]>>;
+      "summary": Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["Interpreting"]["propose"]>[0], ["summary"]>>;
+    };
+    output: {
+      "collection": Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["Interpreting"]["propose"]>[0], ["item"]>>;
+      "interpretation": Jsonify<AtPath<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["Interpreting"]["propose"]>>, ["interpretation"]>>;
+    };
+    error: { error: AppWideError | "ALREADY_COLLECTED" | "EMPTY_CONTENT" | "INVALID_INPUT" | "UNKNOWN_SESSION" };
+  };
+  "/recall/photos/find": {
+    input: {
+      "item": Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["Collecting"]["_find"]>[0], ["item"]>>;
+      "session": Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["Sessioning"]["current"]>[0], ["session"]>>;
+    };
+    output: {
+      "collection": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["Collecting"]["_find"]>>>, ["collection"]>>;
+    };
+    error: { error: AppWideError | "INVALID_INPUT" | "NOT_FOUND" | "UNKNOWN_SESSION" };
+  };
+  "/recall/photos/found": {
+    input: {
+      "collectedAt": Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["Collecting"]["addPhoto"]>[0], ["collectedAt"]>>;
+      "content": Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["Collecting"]["addPhoto"]>[0], ["content"]>>;
+      "imageData": Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["Collecting"]["addPhoto"]>[0], ["imageData"]>>;
+      "item": Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["Collecting"]["addPhoto"]>[0], ["item"]>>;
+      "kind": Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["Interpreting"]["propose"]>[0], ["kind"]>>;
+      "mimeType": Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["Collecting"]["addPhoto"]>[0], ["mimeType"]>>;
+      "session": Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["Sessioning"]["current"]>[0], ["session"]>>;
+      "summary": Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["Interpreting"]["propose"]>[0], ["summary"]>>;
+    };
+    output: {
+      "collection": Jsonify<AtPath<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["Collecting"]["addPhoto"]>>, ["collection"]>>;
+      "interpretation": Jsonify<AllOf<[AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["Interpreting"]["confirm"]>[0], ["interpretation"]>, AtPath<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["Interpreting"]["confirm"]>>, ["interpretation"]>]>>;
+    };
+    error: { error: AppWideError | "ALREADY_COLLECTED" | "EMPTY_CONTENT" | "INVALID_INPUT" | "NOT_PROPOSED" | "UNKNOWN_SESSION" };
+  };
+  "/recall/photos/get": {
+    input: {
+      "collection": Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["Collecting"]["_photo"]>[0], ["collection"]>>;
+      "session": Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["Sessioning"]["current"]>[0], ["session"]>>;
+    };
+    output: {
+      "imageData": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["Collecting"]["_photo"]>>>, ["imageData"]>>;
+      "mimeType": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["Collecting"]["_photo"]>>>, ["mimeType"]>>;
+    };
+    error: { error: AppWideError | "INVALID_INPUT" | "NOT_FOUND" | "UNKNOWN_SESSION" };
+  };
+  "/recall/register": {
+    input: {
+      "password": Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["Authenticating"]["register"]>[0], ["password"]>>;
+      "username": Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["Authenticating"]["register"]>[0], ["username"]>>;
+    };
+    output: {
+      "expiresAt": Jsonify<AtPath<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["Sessioning"]["start"]>>, ["expiresAt"]>>;
+      "session": Jsonify<AtPath<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["Sessioning"]["start"]>>, ["session"]>>;
+      "user": Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["Sessioning"]["start"]>[0], ["subject"]>>;
+    };
+    error: { error: AppWideError | "ACCOUNT_EXISTS" | "INVALID_CREDENTIALS" | "INVALID_INPUT" };
   };
   "/recall/review/confirm": {
     input: {
       "at": Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["Reminding"]["schedule"]>[0], ["at"]>>;
       "collection": Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["Collecting"]["_byId"]>[0], ["collection"]>>;
-      "interpretation": Jsonify<OneOf<[AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["Interpreting"]["confirm"]>[0], ["interpretation"]>, AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["Tracking"]["track"]>[0], ["item"]>]>>;
+      "interpretation": Jsonify<OneOf<[AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["Interpreting"]["_byId"]>[0], ["interpretation"]>, AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["Tracking"]["track"]>[0], ["item"]>, AllOf<[AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["Interpreting"]["confirm"]>[0], ["interpretation"]>, AtPath<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["Interpreting"]["confirm"]>>, ["interpretation"]>]>]>>;
       "session": Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["Sessioning"]["current"]>[0], ["session"]>>;
     };
     output: {
@@ -140,7 +217,7 @@ export type RecallWire = {
   "/recall/review/reject": {
     input: {
       "collection": Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["Collecting"]["_byId"]>[0], ["collection"]>>;
-      "interpretation": Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["Interpreting"]["reject"]>[0], ["interpretation"]>>;
+      "interpretation": Jsonify<OneOf<[AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["Interpreting"]["_byId"]>[0], ["interpretation"]>, AllOf<[AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["Interpreting"]["reject"]>[0], ["interpretation"]>, AtPath<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["Interpreting"]["reject"]>>, ["interpretation"]>]>]>>;
       "session": Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["Sessioning"]["current"]>[0], ["session"]>>;
     };
     output: {
@@ -151,7 +228,7 @@ export type RecallWire = {
   "/recall/review/revise": {
     input: {
       "collection": Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["Collecting"]["_byId"]>[0], ["collection"]>>;
-      "interpretation": Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["Interpreting"]["revise"]>[0], ["interpretation"]>>;
+      "interpretation": Jsonify<OneOf<[AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["Interpreting"]["_byId"]>[0], ["interpretation"]>, AllOf<[AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["Interpreting"]["revise"]>[0], ["interpretation"]>, AtPath<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["Interpreting"]["revise"]>>, ["interpretation"]>]>]>>;
       "kind": Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["Interpreting"]["revise"]>[0], ["kind"]>>;
       "relevantAt": Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["Interpreting"]["revise"]>[0], ["relevantAt"]>>;
       "session": Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["Sessioning"]["current"]>[0], ["session"]>>;
@@ -166,18 +243,28 @@ export type RecallWire = {
     input: {
       "collection": Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["Collecting"]["_byId"]>[0], ["collection"]>>;
       "session": Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["Sessioning"]["current"]>[0], ["session"]>>;
-      "tracking": Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["Tracking"]["complete"]>[0], ["tracking"]>>;
+      "tracking": Jsonify<OneOf<[AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["Tracking"]["_byId"]>[0], ["tracking"]>, AllOf<[AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["Tracking"]["complete"]>[0], ["tracking"]>, AtPath<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["Tracking"]["complete"]>>, ["tracking"]>]>]>>;
     };
     output: {
       "tracking": Jsonify<AllOf<[AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["Tracking"]["complete"]>[0], ["tracking"]>, AtPath<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["Tracking"]["complete"]>>, ["tracking"]>]>>;
     };
     error: { error: AppWideError | "INVALID_INPUT" | "NOT_FOUND" | "NOT_OWNER" | "NOT_PENDING" | "UNKNOWN_SESSION" };
   };
+  "/recall/saved/delete": {
+    input: {
+      "collection": Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["Collecting"]["remove"]>[0], ["collection"]>>;
+      "session": Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["Sessioning"]["current"]>[0], ["session"]>>;
+    };
+    output: {
+      "collection": Jsonify<AllOf<[AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["Collecting"]["remove"]>[0], ["collection"]>, AtPath<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["Collecting"]["remove"]>>, ["collection"]>]>>;
+    };
+    error: { error: AppWideError | "INVALID_INPUT" | "NOT_OWNER" | "UNKNOWN_SESSION" };
+  };
   "/recall/saved/dismiss": {
     input: {
       "collection": Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["Collecting"]["_byId"]>[0], ["collection"]>>;
       "session": Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["Sessioning"]["current"]>[0], ["session"]>>;
-      "tracking": Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["Tracking"]["dismiss"]>[0], ["tracking"]>>;
+      "tracking": Jsonify<OneOf<[AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["Tracking"]["_byId"]>[0], ["tracking"]>, AllOf<[AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["Tracking"]["dismiss"]>[0], ["tracking"]>, AtPath<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["Tracking"]["dismiss"]>>, ["tracking"]>]>]>>;
     };
     output: {
       "tracking": Jsonify<AllOf<[AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["Tracking"]["dismiss"]>[0], ["tracking"]>, AtPath<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["Tracking"]["dismiss"]>>, ["tracking"]>]>>;
@@ -195,21 +282,21 @@ export type RecallWire = {
         "collection": Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["Collecting"]["_byId"]>[0], ["collection"]>>;
         "content": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["Collecting"]["_byId"]>>>, ["content"]>>;
         "interpretationRow": {
-          "interpretation": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["Interpreting"]["_byItem"]>>>, ["interpretation"]>>;
-          "kind": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["Interpreting"]["_byItem"]>>>, ["kind"]>>;
-          "relevantAt": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["Interpreting"]["_byItem"]>>>, ["relevantAt"]>>;
-          "status": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["Interpreting"]["_byItem"]>>>, ["status"]>>;
-          "summary": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["Interpreting"]["_byItem"]>>>, ["summary"]>>;
+          "interpretation": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["Interpreting"]["_byItem"]>>>, ["interpretation"]>> | null;
+          "kind": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["Interpreting"]["_byItem"]>>>, ["kind"]>> | null;
+          "relevantAt": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["Interpreting"]["_byItem"]>>>, ["relevantAt"]>> | null;
+          "status": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["Interpreting"]["_byItem"]>>>, ["status"]>> | null;
+          "summary": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["Interpreting"]["_byItem"]>>>, ["summary"]>> | null;
         };
         "item": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["Collecting"]["_byId"]>>>, ["item"]>>;
         "reminderRow": {
-          "at": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["Reminding"]["_byItem"]>>>, ["at"]>>;
-          "reminder": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["Reminding"]["_byItem"]>>>, ["reminder"]>>;
-          "status": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["Reminding"]["_byItem"]>>>, ["status"]>>;
+          "at": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["Reminding"]["_byItem"]>>>, ["at"]>> | null;
+          "reminder": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["Reminding"]["_byItem"]>>>, ["reminder"]>> | null;
+          "status": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["Reminding"]["_byItem"]>>>, ["status"]>> | null;
         };
         "trackingRow": {
-          "status": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["Tracking"]["_byItem"]>>>, ["status"]>>;
-          "tracking": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["Tracking"]["_byItem"]>>>, ["tracking"]>>;
+          "status": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["Tracking"]["_byItem"]>>>, ["status"]>> | null;
+          "tracking": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["Tracking"]["_byItem"]>>>, ["tracking"]>> | null;
         };
       };
     };
@@ -220,7 +307,7 @@ export type RecallWire = {
       "at": Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["Reminding"]["reschedule"]>[0], ["at"]>>;
       "collection": Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["Collecting"]["_byId"]>[0], ["collection"]>>;
       "session": Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["Sessioning"]["current"]>[0], ["session"]>>;
-      "tracking": Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["Reminding"]["_byItem"]>[0], ["item"]>>;
+      "tracking": Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["Tracking"]["_byId"]>[0], ["tracking"]>>;
     };
     output: {
       "at": Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["Reminding"]["reschedule"]>[0], ["at"]>>;
@@ -230,23 +317,24 @@ export type RecallWire = {
   };
   "/recall/start": {
     input: {
-      "user": Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["Sessioning"]["start"]>[0], ["subject"]>>;
+      "password": Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["Authenticating"]["login"]>[0], ["password"]>>;
+      "username": Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["Authenticating"]["login"]>[0], ["username"]>>;
     };
     output: {
       "expiresAt": Jsonify<AtPath<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["Sessioning"]["start"]>>, ["expiresAt"]>>;
       "session": Jsonify<AtPath<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["Sessioning"]["start"]>>, ["session"]>>;
       "user": Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["Sessioning"]["start"]>[0], ["subject"]>>;
     };
-    error: { error: AppWideError | "INVALID_INPUT" };
+    error: { error: AppWideError | "INVALID_CREDENTIALS" | "INVALID_INPUT" };
   };
   "/recall/sweep/tick": {
     input: {
-      "now": Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["Reminding"]["sweepDue"]>[0], ["now"]>>;
+      "session": Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["Sessioning"]["current"]>[0], ["session"]>>;
     };
     output: {
       "count": Jsonify<AtPath<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["Reminding"]["sweepDue"]>>, ["count"]>>;
     };
-    error: { error: AppWideError | "INVALID_INPUT" };
+    error: { error: AppWideError | "INVALID_INPUT" | "UNKNOWN_SESSION" };
   };
 };
 
@@ -278,6 +366,15 @@ export type RecallWireHttp = {
     };
     error: { error: HttpAppWideError | "INVALID_REQUEST" | "UNAUTHORIZED" };
   };
+  "/recall/end": {
+    input: {
+      "session": Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["Sessioning"]["end"]>[0], ["session"]>>;
+    };
+    output: {
+      "ended": Jsonify<AtPath<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["Sessioning"]["end"]>>, ["ended"]>>;
+    };
+    error: { error: HttpAppWideError | "INVALID_REQUEST" | "UNAUTHORIZED" };
+  };
   "/recall/inbox/list": {
     input: {
       "session": Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["Sessioning"]["current"]>[0], ["session"]>>;
@@ -319,36 +416,104 @@ export type RecallWireHttp = {
     };
     output: {
       "book": {
-        "items": {
+        "items": ({
           "collectedAt": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["Collecting"]["_byOwner"]>>>, ["collectedAt"]>>;
           "collection": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["Collecting"]["_byOwner"]>>>, ["collection"]>>;
           "content": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["Collecting"]["_byOwner"]>>>, ["content"]>>;
           "interpretationRow": {
-            "interpretation": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["Interpreting"]["_byItem"]>>>, ["interpretation"]>>;
-            "kind": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["Interpreting"]["_byItem"]>>>, ["kind"]>>;
-            "relevantAt": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["Interpreting"]["_byItem"]>>>, ["relevantAt"]>>;
-            "status": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["Interpreting"]["_byItem"]>>>, ["status"]>>;
-            "summary": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["Interpreting"]["_byItem"]>>>, ["summary"]>>;
+            "interpretation": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["Interpreting"]["_byItem"]>>>, ["interpretation"]>> | null;
+            "kind": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["Interpreting"]["_byItem"]>>>, ["kind"]>> | null;
+            "relevantAt": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["Interpreting"]["_byItem"]>>>, ["relevantAt"]>> | null;
+            "status": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["Interpreting"]["_byItem"]>>>, ["status"]>> | null;
+            "summary": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["Interpreting"]["_byItem"]>>>, ["summary"]>> | null;
           };
           "reminderRow": {
-            "at": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["Reminding"]["_byItem"]>>>, ["at"]>>;
-            "reminder": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["Reminding"]["_byItem"]>>>, ["reminder"]>>;
-            "status": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["Reminding"]["_byItem"]>>>, ["status"]>>;
+            "at": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["Reminding"]["_byItem"]>>>, ["at"]>> | null;
+            "reminder": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["Reminding"]["_byItem"]>>>, ["reminder"]>> | null;
+            "status": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["Reminding"]["_byItem"]>>>, ["status"]>> | null;
           };
           "trackingRow": {
-            "status": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["Tracking"]["_byItem"]>>>, ["status"]>>;
-            "tracking": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["Tracking"]["_byItem"]>>>, ["tracking"]>>;
+            "status": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["Tracking"]["_byItem"]>>>, ["status"]>> | null;
+            "tracking": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["Tracking"]["_byItem"]>>>, ["tracking"]>> | null;
           };
-        }[];
+        })[];
       };
     };
     error: { error: HttpAppWideError | "INVALID_REQUEST" | "UNAUTHORIZED" };
+  };
+  "/recall/photos/add": {
+    input: {
+      "collectedAt": Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["Collecting"]["addPhoto"]>[0], ["collectedAt"]>>;
+      "content": Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["Collecting"]["addPhoto"]>[0], ["content"]>>;
+      "imageData": Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["Collecting"]["addPhoto"]>[0], ["imageData"]>>;
+      "item": Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["Collecting"]["addPhoto"]>[0], ["item"]>>;
+      "kind": Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["Interpreting"]["propose"]>[0], ["kind"]>>;
+      "mimeType": Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["Collecting"]["addPhoto"]>[0], ["mimeType"]>>;
+      "relevantAt": Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["Interpreting"]["propose"]>[0], ["relevantAt"]>>;
+      "session": Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["Sessioning"]["current"]>[0], ["session"]>>;
+      "summary": Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["Interpreting"]["propose"]>[0], ["summary"]>>;
+    };
+    output: {
+      "collection": Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["Interpreting"]["propose"]>[0], ["item"]>>;
+      "interpretation": Jsonify<AtPath<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["Interpreting"]["propose"]>>, ["interpretation"]>>;
+    };
+    error: { error: HttpAppWideError | "CONFLICT" | "INVALID_REQUEST" | "UNAUTHORIZED" };
+  };
+  "/recall/photos/find": {
+    input: {
+      "item": Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["Collecting"]["_find"]>[0], ["item"]>>;
+      "session": Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["Sessioning"]["current"]>[0], ["session"]>>;
+    };
+    output: {
+      "collection": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["Collecting"]["_find"]>>>, ["collection"]>>;
+    };
+    error: { error: HttpAppWideError | "INTERNAL_ERROR" | "INVALID_REQUEST" | "UNAUTHORIZED" };
+  };
+  "/recall/photos/found": {
+    input: {
+      "collectedAt": Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["Collecting"]["addPhoto"]>[0], ["collectedAt"]>>;
+      "content": Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["Collecting"]["addPhoto"]>[0], ["content"]>>;
+      "imageData": Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["Collecting"]["addPhoto"]>[0], ["imageData"]>>;
+      "item": Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["Collecting"]["addPhoto"]>[0], ["item"]>>;
+      "kind": Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["Interpreting"]["propose"]>[0], ["kind"]>>;
+      "mimeType": Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["Collecting"]["addPhoto"]>[0], ["mimeType"]>>;
+      "session": Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["Sessioning"]["current"]>[0], ["session"]>>;
+      "summary": Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["Interpreting"]["propose"]>[0], ["summary"]>>;
+    };
+    output: {
+      "collection": Jsonify<AtPath<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["Collecting"]["addPhoto"]>>, ["collection"]>>;
+      "interpretation": Jsonify<AllOf<[AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["Interpreting"]["confirm"]>[0], ["interpretation"]>, AtPath<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["Interpreting"]["confirm"]>>, ["interpretation"]>]>>;
+    };
+    error: { error: HttpAppWideError | "CONFLICT" | "INVALID_REQUEST" | "UNAUTHORIZED" };
+  };
+  "/recall/photos/get": {
+    input: {
+      "collection": Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["Collecting"]["_photo"]>[0], ["collection"]>>;
+      "session": Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["Sessioning"]["current"]>[0], ["session"]>>;
+    };
+    output: {
+      "imageData": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["Collecting"]["_photo"]>>>, ["imageData"]>>;
+      "mimeType": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["Collecting"]["_photo"]>>>, ["mimeType"]>>;
+    };
+    error: { error: HttpAppWideError | "INTERNAL_ERROR" | "INVALID_REQUEST" | "UNAUTHORIZED" };
+  };
+  "/recall/register": {
+    input: {
+      "password": Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["Authenticating"]["register"]>[0], ["password"]>>;
+      "username": Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["Authenticating"]["register"]>[0], ["username"]>>;
+    };
+    output: {
+      "expiresAt": Jsonify<AtPath<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["Sessioning"]["start"]>>, ["expiresAt"]>>;
+      "session": Jsonify<AtPath<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["Sessioning"]["start"]>>, ["session"]>>;
+      "user": Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["Sessioning"]["start"]>[0], ["subject"]>>;
+    };
+    error: { error: HttpAppWideError | "CONFLICT" | "INVALID_REQUEST" | "UNAUTHORIZED" };
   };
   "/recall/review/confirm": {
     input: {
       "at": Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["Reminding"]["schedule"]>[0], ["at"]>>;
       "collection": Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["Collecting"]["_byId"]>[0], ["collection"]>>;
-      "interpretation": Jsonify<OneOf<[AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["Interpreting"]["confirm"]>[0], ["interpretation"]>, AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["Tracking"]["track"]>[0], ["item"]>]>>;
+      "interpretation": Jsonify<OneOf<[AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["Interpreting"]["_byId"]>[0], ["interpretation"]>, AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["Tracking"]["track"]>[0], ["item"]>, AllOf<[AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["Interpreting"]["confirm"]>[0], ["interpretation"]>, AtPath<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["Interpreting"]["confirm"]>>, ["interpretation"]>]>]>>;
       "session": Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["Sessioning"]["current"]>[0], ["session"]>>;
     };
     output: {
@@ -379,7 +544,7 @@ export type RecallWireHttp = {
   "/recall/review/reject": {
     input: {
       "collection": Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["Collecting"]["_byId"]>[0], ["collection"]>>;
-      "interpretation": Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["Interpreting"]["reject"]>[0], ["interpretation"]>>;
+      "interpretation": Jsonify<OneOf<[AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["Interpreting"]["_byId"]>[0], ["interpretation"]>, AllOf<[AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["Interpreting"]["reject"]>[0], ["interpretation"]>, AtPath<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["Interpreting"]["reject"]>>, ["interpretation"]>]>]>>;
       "session": Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["Sessioning"]["current"]>[0], ["session"]>>;
     };
     output: {
@@ -390,7 +555,7 @@ export type RecallWireHttp = {
   "/recall/review/revise": {
     input: {
       "collection": Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["Collecting"]["_byId"]>[0], ["collection"]>>;
-      "interpretation": Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["Interpreting"]["revise"]>[0], ["interpretation"]>>;
+      "interpretation": Jsonify<OneOf<[AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["Interpreting"]["_byId"]>[0], ["interpretation"]>, AllOf<[AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["Interpreting"]["revise"]>[0], ["interpretation"]>, AtPath<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["Interpreting"]["revise"]>>, ["interpretation"]>]>]>>;
       "kind": Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["Interpreting"]["revise"]>[0], ["kind"]>>;
       "relevantAt": Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["Interpreting"]["revise"]>[0], ["relevantAt"]>>;
       "session": Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["Sessioning"]["current"]>[0], ["session"]>>;
@@ -405,18 +570,28 @@ export type RecallWireHttp = {
     input: {
       "collection": Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["Collecting"]["_byId"]>[0], ["collection"]>>;
       "session": Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["Sessioning"]["current"]>[0], ["session"]>>;
-      "tracking": Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["Tracking"]["complete"]>[0], ["tracking"]>>;
+      "tracking": Jsonify<OneOf<[AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["Tracking"]["_byId"]>[0], ["tracking"]>, AllOf<[AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["Tracking"]["complete"]>[0], ["tracking"]>, AtPath<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["Tracking"]["complete"]>>, ["tracking"]>]>]>>;
     };
     output: {
       "tracking": Jsonify<AllOf<[AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["Tracking"]["complete"]>[0], ["tracking"]>, AtPath<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["Tracking"]["complete"]>>, ["tracking"]>]>>;
     };
     error: { error: HttpAppWideError | "CONFLICT" | "FORBIDDEN" | "INTERNAL_ERROR" | "INVALID_REQUEST" | "UNAUTHORIZED" };
   };
+  "/recall/saved/delete": {
+    input: {
+      "collection": Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["Collecting"]["remove"]>[0], ["collection"]>>;
+      "session": Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["Sessioning"]["current"]>[0], ["session"]>>;
+    };
+    output: {
+      "collection": Jsonify<AllOf<[AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["Collecting"]["remove"]>[0], ["collection"]>, AtPath<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["Collecting"]["remove"]>>, ["collection"]>]>>;
+    };
+    error: { error: HttpAppWideError | "FORBIDDEN" | "INVALID_REQUEST" | "UNAUTHORIZED" };
+  };
   "/recall/saved/dismiss": {
     input: {
       "collection": Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["Collecting"]["_byId"]>[0], ["collection"]>>;
       "session": Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["Sessioning"]["current"]>[0], ["session"]>>;
-      "tracking": Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["Tracking"]["dismiss"]>[0], ["tracking"]>>;
+      "tracking": Jsonify<OneOf<[AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["Tracking"]["_byId"]>[0], ["tracking"]>, AllOf<[AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["Tracking"]["dismiss"]>[0], ["tracking"]>, AtPath<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["Tracking"]["dismiss"]>>, ["tracking"]>]>]>>;
     };
     output: {
       "tracking": Jsonify<AllOf<[AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["Tracking"]["dismiss"]>[0], ["tracking"]>, AtPath<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["Tracking"]["dismiss"]>>, ["tracking"]>]>>;
@@ -434,21 +609,21 @@ export type RecallWireHttp = {
         "collection": Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["Collecting"]["_byId"]>[0], ["collection"]>>;
         "content": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["Collecting"]["_byId"]>>>, ["content"]>>;
         "interpretationRow": {
-          "interpretation": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["Interpreting"]["_byItem"]>>>, ["interpretation"]>>;
-          "kind": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["Interpreting"]["_byItem"]>>>, ["kind"]>>;
-          "relevantAt": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["Interpreting"]["_byItem"]>>>, ["relevantAt"]>>;
-          "status": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["Interpreting"]["_byItem"]>>>, ["status"]>>;
-          "summary": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["Interpreting"]["_byItem"]>>>, ["summary"]>>;
+          "interpretation": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["Interpreting"]["_byItem"]>>>, ["interpretation"]>> | null;
+          "kind": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["Interpreting"]["_byItem"]>>>, ["kind"]>> | null;
+          "relevantAt": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["Interpreting"]["_byItem"]>>>, ["relevantAt"]>> | null;
+          "status": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["Interpreting"]["_byItem"]>>>, ["status"]>> | null;
+          "summary": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["Interpreting"]["_byItem"]>>>, ["summary"]>> | null;
         };
         "item": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["Collecting"]["_byId"]>>>, ["item"]>>;
         "reminderRow": {
-          "at": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["Reminding"]["_byItem"]>>>, ["at"]>>;
-          "reminder": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["Reminding"]["_byItem"]>>>, ["reminder"]>>;
-          "status": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["Reminding"]["_byItem"]>>>, ["status"]>>;
+          "at": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["Reminding"]["_byItem"]>>>, ["at"]>> | null;
+          "reminder": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["Reminding"]["_byItem"]>>>, ["reminder"]>> | null;
+          "status": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["Reminding"]["_byItem"]>>>, ["status"]>> | null;
         };
         "trackingRow": {
-          "status": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["Tracking"]["_byItem"]>>>, ["status"]>>;
-          "tracking": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["Tracking"]["_byItem"]>>>, ["tracking"]>>;
+          "status": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["Tracking"]["_byItem"]>>>, ["status"]>> | null;
+          "tracking": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["Tracking"]["_byItem"]>>>, ["tracking"]>> | null;
         };
       };
     };
@@ -459,7 +634,7 @@ export type RecallWireHttp = {
       "at": Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["Reminding"]["reschedule"]>[0], ["at"]>>;
       "collection": Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["Collecting"]["_byId"]>[0], ["collection"]>>;
       "session": Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["Sessioning"]["current"]>[0], ["session"]>>;
-      "tracking": Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["Reminding"]["_byItem"]>[0], ["item"]>>;
+      "tracking": Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["Tracking"]["_byId"]>[0], ["tracking"]>>;
     };
     output: {
       "at": Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["Reminding"]["reschedule"]>[0], ["at"]>>;
@@ -469,22 +644,23 @@ export type RecallWireHttp = {
   };
   "/recall/start": {
     input: {
-      "user": Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["Sessioning"]["start"]>[0], ["subject"]>>;
+      "password": Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["Authenticating"]["login"]>[0], ["password"]>>;
+      "username": Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["Authenticating"]["login"]>[0], ["username"]>>;
     };
     output: {
       "expiresAt": Jsonify<AtPath<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["Sessioning"]["start"]>>, ["expiresAt"]>>;
       "session": Jsonify<AtPath<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["Sessioning"]["start"]>>, ["session"]>>;
       "user": Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["Sessioning"]["start"]>[0], ["subject"]>>;
     };
-    error: { error: HttpAppWideError | "INVALID_REQUEST" };
+    error: { error: HttpAppWideError | "INVALID_REQUEST" | "UNAUTHORIZED" };
   };
   "/recall/sweep/tick": {
     input: {
-      "now": Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["Reminding"]["sweepDue"]>[0], ["now"]>>;
+      "session": Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["Sessioning"]["current"]>[0], ["session"]>>;
     };
     output: {
       "count": Jsonify<AtPath<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["Reminding"]["sweepDue"]>>, ["count"]>>;
     };
-    error: { error: HttpAppWideError | "INVALID_REQUEST" };
+    error: { error: HttpAppWideError | "INVALID_REQUEST" | "UNAUTHORIZED" };
   };
 };
