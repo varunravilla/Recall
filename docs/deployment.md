@@ -1,5 +1,13 @@
 # Deploy Recall on 6.1040 Apps
 
+Live app: [Recall](https://recall.mit-sdg.dev/).
+
+An HTTP smoke check on October 19, 2026 returned HTTP 200 for the homepage and
+HTTP 200 with `{"status":"ok"}` for `/health`. The homepage references the same
+`index-BY7MV948.js` bundle produced after the add-more-photos fix. This checks
+availability and the database health response, not complete browser journeys or
+the deployment's Git commit identity.
+
 Follow the [course deployment guide](https://61040.github.io/fa26/resources/deploying-apps/).
 The repository is prepared for one Bun process serving both the API and built Vue pages.
 

@@ -4,7 +4,11 @@ Screenshots should come back when they become useful, not just become easier to 
 
 P3 beta: import photos → automatic interpretation → save an undated find, or review a dated reminder → complete, dismiss, or delete.
 
+[Open Recall](https://recall.mit-sdg.dev/)
+
 [Gemini import setup](docs/ai-import.md) · [P3 journey](P3.md) · [Validation](docs/validation/README.md) · [Visual study](docs/visual-study/README.md) · [Design decisions](docs/design-decisions.md) · [Deployment](docs/deployment.md)
+
+[P3 user journey video](https://drive.google.com/file/d/1r-wVCXXpEuqKjzmQkGzn-j-MuozuTZF0/view?usp=sharing) · [Visual design study slides](https://docs.google.com/presentation/d/1z6NSPecjiPFXpwEyJR7AOQWH6pfXjO-oz-uZVtBeBG8/edit)
 
 ## Startup guide
 

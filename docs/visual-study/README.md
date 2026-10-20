@@ -1,5 +1,7 @@
 # Recall visual design study
 
+[Open the visual study in Google Slides](https://docs.google.com/presentation/d/1z6NSPecjiPFXpwEyJR7AOQWH6pfXjO-oz-uZVtBeBG8/edit).
+
 The [two-slide P3 deck](Recall-P3-visual-study.pptx) studies typography and color.
 Each slide collages two external visual references with a current Recall beta
 screenshot. Margin annotations explain the specific choices used in the interface
