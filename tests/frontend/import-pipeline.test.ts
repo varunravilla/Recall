@@ -2,6 +2,25 @@ import { expect, test } from "bun:test";
 import { runImportPipeline } from "../../frontend/src/importPipeline.ts";
 const deferred = () => { let resolve!: () => void; const promise = new Promise<void>(r => resolve = r); return { promise, resolve }; };
 
+test("photos added during the last request import without clearing or restarting", async () => {
+  const queue = [1]; const sent: number[] = [];
+  const aheadEmpty = deferred(); const finish = deferred();
+  let prepares = 0;
+  const work = runImportPipeline<number>({
+    prepare: async () => {
+      const batch = queue.splice(0, 10);
+      if (++prepares === 2) aheadEmpty.resolve();
+      return batch;
+    },
+    send: async batch => { sent.push(...batch); if (batch[0] === 1) await finish.promise; },
+    wait: async () => {}, stopped: () => false, restore: () => {},
+  });
+  await aheadEmpty.promise;
+  queue.push(2, 3); finish.resolve(); await work;
+  expect(sent).toEqual([1, 2, 3]);
+  expect(queue).toEqual([]);
+});
+
 test("prepares one batch ahead during AI and sends batches in order", async () => {
   const firstSend = deferred(); const aheadReady = deferred();
   let prepared = 0; const sent: number[] = [];

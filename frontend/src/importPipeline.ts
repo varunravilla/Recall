@@ -13,8 +13,15 @@ export async function runImportPipeline<T>(options: {
   let pending = prepare();
   try {
     while (!options.stopped()) {
-      const prepared = await pending;
+      let prepared = await pending;
       if ("error" in prepared) throw prepared.error;
+      // The ahead batch may have been empty before the user added more files
+      // during the active request. Recheck the live queue before finishing.
+      if (!prepared.batch.length && !options.stopped()) {
+        pending = prepare();
+        prepared = await pending;
+        if ("error" in prepared) throw prepared.error;
+      }
       current = prepared.batch;
       if (!current.length) break;
       if (options.stopped()) break;

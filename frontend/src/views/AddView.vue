@@ -38,12 +38,17 @@ function selectFiles(event: Event) {
   const input = event.target as HTMLInputElement;
   const selected = Array.from(input.files ?? []);
   const known = new Set(entries.value.map(e => `${e.file.name}:${e.file.size}:${e.file.lastModified}`));
+  const firstNewIndex = entries.value.length;
   for (const file of selected) {
     const identity = `${file.name}:${file.size}:${file.lastModified}`;
     if (known.has(identity)) continue;
     known.add(identity);
     const invalid = validateSourcePhoto(file);
     entries.value.push({ id: nextId++, file, state: invalid ? "skipped" : "queued", message: invalid ?? "Ready to import" });
+  }
+  if (entries.value.length > firstNewIndex) {
+    page.value = Math.floor(firstNewIndex / 30);
+    if (!running.value && !starting.value) { paused.value = false; error.value = ""; }
   }
   input.value = "";
 }
@@ -153,12 +158,12 @@ function clearQueue() { entries.value = []; page.value = 0; }
   <PageShell title="Keep the good finds" subtitle="A photo now. Something to come back to later.">
     <section class="card import-card">
       <label class="photo-dropzone">
-        <input id="selected-photos" class="sr-only" type="file" accept="image/*" multiple :disabled="running" @change="selectFiles" />
+        <input id="selected-photos" class="sr-only" type="file" accept="image/*" multiple @change="selectFiles" />
         <span class="photo-picker-icon" aria-hidden="true"><svg viewBox="0 0 32 32"><rect x="3" y="3" width="26" height="26" rx="7"/><circle cx="11" cy="11" r="3"/><path d="m4 24 9-9 6 6 4-4 6 7"/></svg></span>
-        <strong>Choose photos</strong><span>Screenshots, places, little possibilities.</span>
+        <strong>{{ entries.length ? 'Add more photos' : 'Choose photos' }}</strong><span>Screenshots, places, little possibilities.</span>
         <span class="picker-cta">Browse photos <span aria-hidden="true">↗</span></span>
       </label>
-      <label class="folder-picker"><input class="sr-only" id="photo-library" type="file" webkitdirectory multiple :disabled="running" @change="selectFiles" /><span aria-hidden="true">＋</span> Add a folder instead</label>
+      <label class="folder-picker"><input class="sr-only" id="photo-library" type="file" webkitdirectory multiple @change="selectFiles" /><span aria-hidden="true">＋</span> Add a folder instead</label>
       <details class="import-details"><summary>Import options</summary>
         <label for="import-timezone" class="field-label">Timezone</label><input id="import-timezone" v-model="timezone" :disabled="running || starting" />
         <p class="fine-print">Export Apple Photos to a folder first. If a photo won’t open, export JPEG.</p>
