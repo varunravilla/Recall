@@ -14,7 +14,7 @@ const add = await client.recall.captions.add({
   item,
   content: "Tickets on sale Friday 10am — don't miss the concert!",
   collectedAt: new Date().toISOString(),
-  kind: "buy",
+  kind: "event",
   summary: "Buy tickets",
   relevantAt,
 });

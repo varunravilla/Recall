@@ -9,6 +9,17 @@ Distinguish unresolved intentions from ones that have already been resolved.
 A user tracks an item while it still deserves attention, then completes or dismisses it.
 Pending items are listed separately from completed and dismissed ones.
 
+**Design decisions and guarantees.**
+
+Tracking records a decision to act rather than evidence that an image exists.
+One owner/item pair can have at most one pending tracking, enforced by a unique
+partial index. Completion and dismissal are terminal for that tracking. Conditional
+updates ensure simultaneous resolutions cannot both succeed. The concept does not
+schedule or cancel notifications itself: Recall reacts to a successful resolution.
+History queries include resolved rows so deletion can remove more than the current
+pending item. The public composition also checks that a tracking belongs to the
+supplied collection through its interpretation.
+
 ## Types
 
 ```types

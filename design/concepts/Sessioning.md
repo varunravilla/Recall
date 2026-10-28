@@ -10,6 +10,15 @@ can end without changing that subject's identity.
 Maya starts a session for her user id. Before it expires, current resolves to that
 subject. An unknown or expired session is refused.
 
+**Design decisions and guarantees.**
+
+The subject is an external stable identity, not a username supplied to this
+concept. Sessions are random opaque tokens held in memory with a 30-minute expiry.
+Current refuses unknown, revoked and expired tokens. End revokes only the supplied
+token, so another login remains independent. Restart deliberately signs everyone
+out while leaving persistent accounts and saved data intact. Possession of a valid
+session establishes identity; collection ownership still needs a separate check.
+
 ## Types
 
 ```types

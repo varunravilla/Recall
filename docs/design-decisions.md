@@ -240,3 +240,38 @@ artifact, backend/Vue and production-build checks. Removed local-filter tests we
 replaced by current file-validation and image-budget regressions; concept action
 coverage remains. The earlier two-image real provider result is retained as
 historical integration evidence, not a ten-image speed claim.
+
+## October 26, 2026: P4 boundaries and public behavior
+
+The P2 review found that the main composition mixed all workflows and that its
+specification described little beyond endpoint names. P4 keeps the public Recall
+composition tree stable but moves its definitions into Capture, Views, Review,
+Saved and Lifecycle modules. This groups code by the decisions a user makes and
+the consequences that must follow them. The specification now states ownership
+joins, optional reads, refusal behavior and limits of multi-step execution.
+
+New HTTP tests found two differences that direct gateway tests had missed.
+`NOT_FOUND` refusals lacked an HTTP policy mapping and became 500 responses.
+DateTime prose and TypeScript annotations did not decode JSON timestamps, allowing
+invalid times to confirm a proposal and leaving valid time strings unsuitable for
+MongoDB date queries. Explicit admission validates all date fields before actions,
+concept actions normalize accepted values, and startup converts parseable legacy
+strings. Invalid legacy strings stay unchanged rather than receiving guessed dates.
+
+Concurrent confirmations also needed a state predicate in the update itself.
+Interpreting now changes proposed rows conditionally, and Tracking resolves only
+pending rows conditionally. HTTP regressions expect exactly one successful
+transition under simultaneous requests. This does not make the whole multi-concept
+chain transactional; infrastructure failure between actions remains a limitation.
+
+The October 26 deployed HTTP run confirmed health, credential/session refusal,
+fresh-login persistence, and rejection of another account's deletion. It reproduced
+the old deployment's unmapped 404 and invalid-time bugs. Synthetic items were
+removed and test sessions ended. Two synthetic accounts remain because account
+deletion is unavailable. The saved report is explicitly a failed baseline, not
+proof that the unpushed P4 fixes already run online.
+
+P4 preserves P3's typography and palette. Error responses now use actionable UI
+messages instead of uppercase transport codes. A final design summary connects
+these choices to P1 and P3 and links those historical versions by commit. P5
+participant tasks are prepared, but no user sessions or findings are invented.

@@ -9,6 +9,17 @@ Maintain items discovered for a user without requiring the user to organize them
 Maya adds a screenshot caption to her collection. It remains until she removes it.
 Adding the same item twice for the same user is refused.
 
+**Design decisions and guarantees.**
+
+A capture identity is unique within one owner, not globally. Two people may save
+the same image without learning that the other has it. The caption and optional
+optimized image describe one source and persist together. Metadata list queries
+exclude image bytes; a separate owner-scoped query retrieves them. `_byId` is an
+internal query and does not itself authorize a caller: compositions must bind its
+owner to the authenticated subject. Accepted timestamps normalize to stored dates.
+Removing a collection ends source storage; related-record cleanup is a composition
+consequence, not an implicit dependency of this concept.
+
 ## Types
 
 ```types
@@ -35,6 +46,9 @@ a set of Collections with
 
 ```actions
 add (user: User, item: Item, content: String, collectedAt: DateTime) : returns (collection: Collection)
+  where collectedAt is not a finite timestamp with a timezone
+  then
+    refuses INVALID_TIME "Use a valid timestamp with a timezone."
   where content is blank
   then
     refuses EMPTY_CONTENT "Caption cannot be empty."
@@ -47,6 +61,9 @@ add (user: User, item: Item, content: String, collectedAt: DateTime) : returns (
     returns collection
 
 addPhoto (user: User, item: Item, content: String, collectedAt: DateTime, imageData: String, mimeType: String) : returns (collection: Collection)
+  where collectedAt is not a finite timestamp with a timezone
+  then
+    refuses INVALID_TIME "Use a valid timestamp with a timezone."
   where content is blank or image is not a supported valid image of at most 2 MB
   then
     refuses EMPTY_CONTENT "Caption or image is invalid."

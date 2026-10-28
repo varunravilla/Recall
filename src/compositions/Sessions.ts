@@ -1,3 +1,4 @@
+import { inputContract } from "../input.ts";
 import { endpoint, receive, respond } from "@mit-sdg/sync-engine/boundary";
 import { concepts } from "../concepts.ts";
 
@@ -10,7 +11,7 @@ const Start = endpoint(
       .then(Authenticating.login({ username, password }).responds({ user }))
       .then(Sessioning.start({ subject: user }).responds({ session, expiresAt }))
       .then(respond({ user, session, expiresAt })),
-  { input: { required: ["username", "password"] } },
+  { validators: inputContract("username", "password"), input: { required: ["username", "password"] } },
 );
 
 const Current = endpoint(
@@ -19,7 +20,7 @@ const Current = endpoint(
     receive({ session })
       .then(Sessioning.current({ session }).responds({ subject: user }))
       .then(respond({ user })),
-  { input: { required: ["session"] } },
+  { validators: inputContract("session"), input: { required: ["session"] } },
 );
 
 const Register = endpoint(
@@ -29,13 +30,13 @@ const Register = endpoint(
       .then(Authenticating.register({ username, password }).responds({ user }))
       .then(Sessioning.start({ subject: user }).responds({ session, expiresAt }))
       .then(respond({ user, session, expiresAt })),
-  { input: { required: ["username", "password"] } },
+  { validators: inputContract("username", "password"), input: { required: ["username", "password"] } },
 );
 const End = endpoint(
   "/recall/end",
   ({ session, ended }) => receive({ session })
     .then(Sessioning.end({ session }).responds({ ended }))
     .then(respond({ ended })),
-  { input: { required: ["session"] } },
+  { validators: inputContract("session"), input: { required: ["session"] } },
 );
 export const composition = { Start, Register, Current, End };

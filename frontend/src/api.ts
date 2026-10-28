@@ -1,4 +1,5 @@
 type ApiResult<T> = T | { error: string };
+import { requestError } from "./messages.ts";
 
 async function post<T>(path: string, body: Record<string, unknown>): Promise<ApiResult<T>> {
   let response: Response;
@@ -32,7 +33,7 @@ async function post<T>(path: string, body: Record<string, unknown>): Promise<Api
       return { error: "Your session ended. Log in again." };
     }
     const err = (data as { error?: unknown }).error;
-    return { error: typeof err === "string" ? err : response.statusText };
+    return { error: requestError(response.status, err) };
   }
   return data as T;
 }
@@ -206,6 +207,9 @@ export function itemRoute(item: LibraryItem): { path: string; label: string } {
     return { path: `/saved/${item.collection}`, label: "Open" };
   }
   if (status === "confirmed") {
+    return { path: `/saved/${item.collection}`, label: "Open" };
+  }
+  if (status === "rejected") {
     return { path: `/saved/${item.collection}`, label: "Open" };
   }
   return { path: `/review/${item.collection}`, label: "Review" };

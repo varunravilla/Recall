@@ -28,7 +28,7 @@ export type RecallWire = {
       "collection": Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["Interpreting"]["propose"]>[0], ["item"]>>;
       "interpretation": Jsonify<AtPath<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["Interpreting"]["propose"]>>, ["interpretation"]>>;
     };
-    error: { error: AppWideError | "ALREADY_COLLECTED" | "EMPTY_CONTENT" | "INVALID_INPUT" | "UNKNOWN_SESSION" };
+    error: { error: AppWideError | "ALREADY_COLLECTED" | "EMPTY_CONTENT" | "INVALID_INPUT" | "INVALID_TIME" | "UNKNOWN_SESSION" };
   };
   "/recall/current": {
     input: {
@@ -130,7 +130,7 @@ export type RecallWire = {
       "collection": Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["Interpreting"]["propose"]>[0], ["item"]>>;
       "interpretation": Jsonify<AtPath<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["Interpreting"]["propose"]>>, ["interpretation"]>>;
     };
-    error: { error: AppWideError | "ALREADY_COLLECTED" | "EMPTY_CONTENT" | "INVALID_INPUT" | "UNKNOWN_SESSION" };
+    error: { error: AppWideError | "ALREADY_COLLECTED" | "EMPTY_CONTENT" | "INVALID_INPUT" | "INVALID_TIME" | "UNKNOWN_SESSION" };
   };
   "/recall/photos/find": {
     input: {
@@ -157,7 +157,7 @@ export type RecallWire = {
       "collection": Jsonify<AtPath<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["Collecting"]["addPhoto"]>>, ["collection"]>>;
       "interpretation": Jsonify<AllOf<[AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["Interpreting"]["confirm"]>[0], ["interpretation"]>, AtPath<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["Interpreting"]["confirm"]>>, ["interpretation"]>]>>;
     };
-    error: { error: AppWideError | "ALREADY_COLLECTED" | "EMPTY_CONTENT" | "INVALID_INPUT" | "NOT_PROPOSED" | "UNKNOWN_SESSION" };
+    error: { error: AppWideError | "ALREADY_COLLECTED" | "EMPTY_CONTENT" | "INVALID_INPUT" | "INVALID_TIME" | "NOT_PROPOSED" | "UNKNOWN_SESSION" };
   };
   "/recall/photos/get": {
     input: {
@@ -194,7 +194,7 @@ export type RecallWire = {
       "reminder": Jsonify<AtPath<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["Reminding"]["schedule"]>>, ["reminder"]>>;
       "tracking": Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["Reminding"]["schedule"]>[0], ["item"]>>;
     };
-    error: { error: AppWideError | "ALREADY_TRACKING" | "INVALID_INPUT" | "NOT_FOUND" | "NOT_PROPOSED" | "UNKNOWN_SESSION" };
+    error: { error: AppWideError | "ALREADY_TRACKING" | "INVALID_INPUT" | "INVALID_TIME" | "NOT_FOUND" | "NOT_PROPOSED" | "UNKNOWN_SESSION" };
   };
   "/recall/review/get": {
     input: {
@@ -237,7 +237,7 @@ export type RecallWire = {
     output: {
       "interpretation": Jsonify<AllOf<[AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["Interpreting"]["revise"]>[0], ["interpretation"]>, AtPath<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["Interpreting"]["revise"]>>, ["interpretation"]>]>>;
     };
-    error: { error: AppWideError | "INVALID_INPUT" | "NOT_FOUND" | "NOT_PROPOSED" | "UNKNOWN_SESSION" };
+    error: { error: AppWideError | "INVALID_INPUT" | "INVALID_TIME" | "NOT_FOUND" | "NOT_PROPOSED" | "UNKNOWN_SESSION" };
   };
   "/recall/saved/complete": {
     input: {
@@ -313,7 +313,7 @@ export type RecallWire = {
       "at": Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["Reminding"]["reschedule"]>[0], ["at"]>>;
       "reminder": Jsonify<AllOf<[AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["Reminding"]["reschedule"]>[0], ["reminder"]>, AtPath<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["Reminding"]["reschedule"]>>, ["reminder"]>]>>;
     };
-    error: { error: AppWideError | "INVALID_INPUT" | "NOT_FOUND" | "NOT_OWNER" | "NOT_SCHEDULED" | "UNKNOWN_SESSION" };
+    error: { error: AppWideError | "INVALID_INPUT" | "INVALID_TIME" | "NOT_FOUND" | "NOT_OWNER" | "NOT_SCHEDULED" | "UNKNOWN_SESSION" };
   };
   "/recall/start": {
     input: {
@@ -467,7 +467,7 @@ export type RecallWireHttp = {
     output: {
       "collection": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["Collecting"]["_find"]>>>, ["collection"]>>;
     };
-    error: { error: HttpAppWideError | "INTERNAL_ERROR" | "INVALID_REQUEST" | "UNAUTHORIZED" };
+    error: { error: HttpAppWideError | "INVALID_REQUEST" | "NOT_FOUND" | "UNAUTHORIZED" };
   };
   "/recall/photos/found": {
     input: {
@@ -495,7 +495,7 @@ export type RecallWireHttp = {
       "imageData": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["Collecting"]["_photo"]>>>, ["imageData"]>>;
       "mimeType": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["Collecting"]["_photo"]>>>, ["mimeType"]>>;
     };
-    error: { error: HttpAppWideError | "INTERNAL_ERROR" | "INVALID_REQUEST" | "UNAUTHORIZED" };
+    error: { error: HttpAppWideError | "INVALID_REQUEST" | "NOT_FOUND" | "UNAUTHORIZED" };
   };
   "/recall/register": {
     input: {
@@ -521,7 +521,7 @@ export type RecallWireHttp = {
       "reminder": Jsonify<AtPath<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["Reminding"]["schedule"]>>, ["reminder"]>>;
       "tracking": Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["Reminding"]["schedule"]>[0], ["item"]>>;
     };
-    error: { error: HttpAppWideError | "CONFLICT" | "INTERNAL_ERROR" | "INVALID_REQUEST" | "UNAUTHORIZED" };
+    error: { error: HttpAppWideError | "CONFLICT" | "INVALID_REQUEST" | "NOT_FOUND" | "UNAUTHORIZED" };
   };
   "/recall/review/get": {
     input: {
@@ -539,7 +539,7 @@ export type RecallWireHttp = {
       "status": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["Interpreting"]["_byItem"]>>>, ["status"]>>;
       "summary": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["Interpreting"]["_byItem"]>>>, ["summary"]>>;
     };
-    error: { error: HttpAppWideError | "INTERNAL_ERROR" | "INVALID_REQUEST" | "UNAUTHORIZED" };
+    error: { error: HttpAppWideError | "INVALID_REQUEST" | "NOT_FOUND" | "UNAUTHORIZED" };
   };
   "/recall/review/reject": {
     input: {
@@ -550,7 +550,7 @@ export type RecallWireHttp = {
     output: {
       "interpretation": Jsonify<AllOf<[AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["Interpreting"]["reject"]>[0], ["interpretation"]>, AtPath<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["Interpreting"]["reject"]>>, ["interpretation"]>]>>;
     };
-    error: { error: HttpAppWideError | "CONFLICT" | "INTERNAL_ERROR" | "INVALID_REQUEST" | "UNAUTHORIZED" };
+    error: { error: HttpAppWideError | "CONFLICT" | "INVALID_REQUEST" | "NOT_FOUND" | "UNAUTHORIZED" };
   };
   "/recall/review/revise": {
     input: {
@@ -564,7 +564,7 @@ export type RecallWireHttp = {
     output: {
       "interpretation": Jsonify<AllOf<[AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["Interpreting"]["revise"]>[0], ["interpretation"]>, AtPath<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["Interpreting"]["revise"]>>, ["interpretation"]>]>>;
     };
-    error: { error: HttpAppWideError | "CONFLICT" | "INTERNAL_ERROR" | "INVALID_REQUEST" | "UNAUTHORIZED" };
+    error: { error: HttpAppWideError | "CONFLICT" | "INVALID_REQUEST" | "NOT_FOUND" | "UNAUTHORIZED" };
   };
   "/recall/saved/complete": {
     input: {
@@ -575,7 +575,7 @@ export type RecallWireHttp = {
     output: {
       "tracking": Jsonify<AllOf<[AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["Tracking"]["complete"]>[0], ["tracking"]>, AtPath<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["Tracking"]["complete"]>>, ["tracking"]>]>>;
     };
-    error: { error: HttpAppWideError | "CONFLICT" | "FORBIDDEN" | "INTERNAL_ERROR" | "INVALID_REQUEST" | "UNAUTHORIZED" };
+    error: { error: HttpAppWideError | "CONFLICT" | "FORBIDDEN" | "INVALID_REQUEST" | "NOT_FOUND" | "UNAUTHORIZED" };
   };
   "/recall/saved/delete": {
     input: {
@@ -596,7 +596,7 @@ export type RecallWireHttp = {
     output: {
       "tracking": Jsonify<AllOf<[AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["Tracking"]["dismiss"]>[0], ["tracking"]>, AtPath<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["Tracking"]["dismiss"]>>, ["tracking"]>]>>;
     };
-    error: { error: HttpAppWideError | "CONFLICT" | "FORBIDDEN" | "INTERNAL_ERROR" | "INVALID_REQUEST" | "UNAUTHORIZED" };
+    error: { error: HttpAppWideError | "CONFLICT" | "FORBIDDEN" | "INVALID_REQUEST" | "NOT_FOUND" | "UNAUTHORIZED" };
   };
   "/recall/saved/get": {
     input: {
@@ -627,7 +627,7 @@ export type RecallWireHttp = {
         };
       };
     };
-    error: { error: HttpAppWideError | "INTERNAL_ERROR" | "INVALID_REQUEST" | "UNAUTHORIZED" };
+    error: { error: HttpAppWideError | "INVALID_REQUEST" | "NOT_FOUND" | "UNAUTHORIZED" };
   };
   "/recall/saved/reschedule": {
     input: {
@@ -640,7 +640,7 @@ export type RecallWireHttp = {
       "at": Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["Reminding"]["reschedule"]>[0], ["at"]>>;
       "reminder": Jsonify<AllOf<[AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["Reminding"]["reschedule"]>[0], ["reminder"]>, AtPath<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["Reminding"]["reschedule"]>>, ["reminder"]>]>>;
     };
-    error: { error: HttpAppWideError | "CONFLICT" | "FORBIDDEN" | "INTERNAL_ERROR" | "INVALID_REQUEST" | "UNAUTHORIZED" };
+    error: { error: HttpAppWideError | "CONFLICT" | "FORBIDDEN" | "INVALID_REQUEST" | "NOT_FOUND" | "UNAUTHORIZED" };
   };
   "/recall/start": {
     input: {

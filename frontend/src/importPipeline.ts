@@ -39,11 +39,13 @@ export async function runImportPipeline<T>(options: {
       }
     }
   } finally {
-    options.restore(current);
+    if (current.length) options.restore(current);
     if (ahead) options.restore(await ahead);
     else {
       const prepared = await pending;
-      options.restore(prepared.batch);
+      // A pause can leave `pending` pointing to the batch already in current.
+      // Restore it once, including when preparation completed after the pause.
+      if (prepared.batch !== current && prepared.batch.length) options.restore(prepared.batch);
     }
   }
 }

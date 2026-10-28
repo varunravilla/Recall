@@ -1,12 +1,12 @@
-# Agent guide — Recall (6.1040 P3)
+# Agent guide — Recall (6.1040 P4)
 
-**Repo state:** P3 beta. See [README.md](README.md#startup-guide) to run locally.
+**Repo state:** P4 local refinements; deployed version requires verification after updates. See [README.md](README.md#startup-guide) to run locally.
 
 ## Read first
 
 1. [README.md](README.md)
 2. [P1.md](P1.md) — design narrative + UI sketch links
-3. [P3.md](P3.md) — current user journey and scope; P2.md is historical
+3. [P4.md](P4.md) and [docs/design-summary.md](docs/design-summary.md) — current journey, design and validation scope
 4. [design/](design/) — sync-engine specs (edit here; run `bun run check:design`)
 
 ## Course links
@@ -81,5 +81,5 @@ bun run dev
 
 ## Current documentation
 
-See P3.md for the beta journey and limits, docs/validation/ for saved checks,
+See P4.md for the current journey and limits, docs/validation/ for saved checks,
 and docs/deployment.md for production setup.

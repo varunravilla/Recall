@@ -1,3 +1,4 @@
+import { instant } from "../input.ts";
 import { type Collection, type Db } from "mongodb";
 
 export class NotOwner extends Error {}
@@ -29,6 +30,7 @@ export class RemindingConcept {
   }
 
   async schedule({ user, item, at }: { user: string; item: string; at: Date }) {
+    at = instant(at);
     await this.#ensureIndex();
     const reminder = crypto.randomUUID();
     await this.reminders.insertOne({
@@ -50,6 +52,7 @@ export class RemindingConcept {
     if (row.status !== "scheduled") {
       throw new NotScheduled("Only a scheduled reminder can be rescheduled.");
     }
+    at = instant(at);
     await this.reminders.updateOne({ _id: reminder }, { $set: { at } });
     return { reminder };
   }

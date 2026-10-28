@@ -1,130 +1,90 @@
 # Recall
 
-Screenshots should come back when they become useful, not just become easier to find.
+Recall turns screenshots of events, places and products into ideas to revisit or
+reminders to act on. It keeps the source image alongside the interpretation so
+users can review dated suggestions before scheduling them.
 
-P3 beta: import photos → automatic interpretation → save an undated find, or review a dated reminder → complete, dismiss, or delete.
+[Live app](https://recall.mit-sdg.dev/) · [P4 overview](P4.md) · [Final design](docs/design-summary.md) · [Specifications](design/) · [Validation](docs/validation/README.md)
 
-[Open Recall](https://recall.mit-sdg.dev/)
-
-[Gemini import setup](docs/ai-import.md) · [P3 journey](P3.md) · [Validation](docs/validation/README.md) · [Visual study](docs/visual-study/README.md) · [Design decisions](docs/design-decisions.md) · [Deployment](docs/deployment.md)
-
-[P3 user journey video](https://drive.google.com/file/d/1r-wVCXXpEuqKjzmQkGzn-j-MuozuTZF0/view?usp=sharing) · [Visual design study slides](https://docs.google.com/presentation/d/1z6NSPecjiPFXpwEyJR7AOQWH6pfXjO-oz-uZVtBeBG8/edit)
+[Journey recording](https://drive.google.com/file/d/1r-wVCXXpEuqKjzmQkGzn-j-MuozuTZF0/view?usp=sharing) · [Visual study](docs/visual-study/README.md) · [Google Slides](https://docs.google.com/presentation/d/1z6NSPecjiPFXpwEyJR7AOQWH6pfXjO-oz-uZVtBeBG8/edit)
 
 ## Startup guide
 
-### Prerequisites
+Requires Bun **1.4.2** and either Podman with Compose or a MongoDB connection.
+All dependencies install from the root package and `bun.lock`.
 
-- [Bun](https://bun.sh) (`bun --version`)
-- [Podman](https://podman.io) + Compose ([MongoDB setup guide](https://61040.github.io/fa26/resources/mongodb-setup/))
-
-### 1. Environment
-
-```sh
-cp .env.example .env
-bun install
-```
-
-`.env` uses `mongodb://dev:dev@127.0.0.1:27017/recall?authSource=admin` (matches `compose.yaml`).
-
-### 2. Podman + MongoDB
-
+For first-time setup, copy `.env.example` to `.env`. Preserve an existing `.env`.
+Set `GEMINI_API_KEY` to your own Google AI Studio key and keep it server-side.
+The supplied `MONGODB_URL` matches the local Compose database. See
+[AI setup and privacy](docs/ai-import.md) for quotas and image limits.
 
 ```sh
-podman machine start
-
-```
-
-
-```sh
+bun install --frozen-lockfile
+podman machine start       # macOS, if the machine is stopped
 bun run db:up
-```
-
-
-### 3. Run the app
-
-```sh
 bun run dev
 ```
 
-- **API:** http://127.0.0.1:3000 (`/health`, `/api/...`)
-- **UI:** http://localhost:5173 (Vite proxies `/api` to the backend)
+Open **http://localhost:5173**. Vite proxies `/api` to the backend at
+**http://127.0.0.1:3000**. `/health` checks MongoDB connectivity. Password accounts
+are created through the app. A browser can read selected files or an exported
+folder, but cannot watch Apple Photos in the background.
 
-Or run pieces separately:
+For a production preview, stop the development server, keep MongoDB running, and
+run `bun run preview`. Open **http://127.0.0.1:3000**. One Bun process serves the
+built Vue pages and API. [Deployment settings](docs/deployment.md) use root package
+directory `.`, build script `build`, start script `start`, and `MONGODB_URL`.
 
-```sh
-bun run db:up
-bun run dev:backend   # port 3000
-bun run dev:frontend  # port 5173
-```
-
-### 4. Verify
+## Build and test
 
 ```sh
 bun run check:design
 bun run generate
 bun run check
-bun test              # needs `bun run db:up` first
-bun run test:memory   # no Podman; good for CI / broken Podman
+bun run check:frontend
+bun run build
+bun run test:memory
 ```
 
-Optional end-to-end script (backend must be running):
+`test:memory` starts temporary MongoDB instances and uses isolated databases. Its
+first run may download the MongoDB binary. Alternatively, start the Compose DB
+and run `bun test`; each test database has a random `test-` name and is dropped
+afterward. Tests never clear the configured application database.
 
-```sh
-bun scripts/try-journey.ts
-```
+`bun scripts/validate.ts` runs the full sequence and saves output in
+`docs/validation/`, including Bun's coverage report. The [coverage map](docs/testing.md)
+links endpoint contracts and failure risks to their tests. Live Gemini checks are
+optional and use your API quota.
+`bun scripts/check-deployed.ts https://recall.mit-sdg.dev/` checks deployed HTTP
+persistence, access refusal and errors using synthetic accounts and data. It
+cleans up its items, sends no AI requests, and leaves its synthetic accounts.
+See the [browser checklist](docs/browser-checks.md) for interface verification.
 
-### Beta journey
+## Using Recall
 
-1. Create a password account, then open **Add**.
-2. Choose photos or an exported folder and allow photo analysis.
-3. Dated suggestions open in **Review**. Correct the action/time and choose **Save
-   reminder**. Useful undated images appear in Saved as **Found**, without a reminder.
-4. Open **Inbox** when due, then complete or dismiss. Search Saved, or delete an
-   item after confirming its removal.
+1. Sign in, choose photos or a folder, allow analysis, then **Find my saves**.
+2. Review a dated suggestion against its image, edit as needed, then **Save reminder**.
+   Useful undated items appear in Saved as **Found**, without reminders.
+3. Search Saved or return to Inbox when a reminder is due. Complete, dismiss, or
+   delete an item when it no longer needs attention. Deletion asks for confirmation.
 
-Gemini generates captions and actions, and times only when the image supports them. Expired and irrelevant images are skipped. Accepted images persist in your account. See [setup and privacy details](docs/ai-import.md). Recall cannot scan Photos in the background.
-Reminders appear in the open Inbox; they are not OS notifications.
+You can add more photos during analysis without clearing earlier results. Pause
+finishes the active batch and preserves waiting files. Reloading clears waiting
+files, while accepted images persist. Reminders appear in the open Inbox rather
+than as OS notifications. Sessions expire after 30 minutes and on server restart.
+Password recovery and reopening completed intentions are not implemented.
 
-### P3 checks
+## Project materials
 
-```sh
-bun run check:frontend     # checks Vue templates as well as TypeScript
-bun run build              # production Vue bundle
-bun scripts/validate.ts    # saves design/check/build/test output in docs/validation/
-bun scripts/check-gemini.ts # live Gemini test with a synthetic fixture; requires your API key
-```
-
-See [P3.md](P3.md) for the current journey and limitations.
-P1 and P2 remain historical milestone records.
-
-## Project layout
-
-| Path | Role |
+| Material | Purpose |
 | --- | --- |
-| [P1.md](P1.md) | P1 design narrative |
-| [design_images/](design_images/) | UI sketches (P1) |
-| [design/](design/) | sync-engine specs |
-| [src/](src/) | Backend concepts + compositions |
-| [frontend/](frontend/) | Vue 3 + Vite UI |
-| [P2.md](P2.md) | P2 journey + demo link |
+| [Final design document](docs/design-summary.md) | Significant decisions and differences from P1/P3 |
+| [Design notes](docs/design-decisions.md) | Dated engineering observations and rationale |
+| [Composition specification](design/compositions/Recall.md) | Workflow boundaries, ownership rules and consequences |
+| [Concept specifications](design/concepts/) and [generated API](generated/recall.md) | State/action contracts and endpoint interface |
+| [Validation](docs/validation/README.md) | Saved results and limits of the evidence |
+| [P5 testing preparation](docs/user-testing.md) | Participant tasks and observation guide |
+| [P1](P1.md), [P2](P2.md), [P3](P3.md) | Historical milestone narratives |
 
-## Course
-
-- [P2 assignment](https://61040.github.io/fa26/assignments/p2/)
-- [sync-engine local dev](https://61040.github.io/fa26/resources/sync-engine-local-dev/)
-
-### Photo import
-
-Choose photos or an exported library folder, allow analysis, and select **Find my
-saves**. Every readable new image is analyzed automatically; no local OCR or filter
-mode needs configuring. Useful undated items appear as Found; dated suggestions
-can become reminders after review. Existing saved images bypass repeat analysis.
-
-The importer sends up to ten images per request and prepares one batch ahead.
-New image copies target 1 MB each; originals stay untouched. Google quotas can
-still require a wait. Optional `GEMINI_REQUESTS_PER_MINUTE` configures known project
-limits; provider retry hints handle other quota responses. Waiting files remain
-in the tab when paused, but a reload clears them. See [import details](docs/ai-import.md)
-and [validation](docs/validation/README.md).
-
-[Browser verification checklist](docs/browser-checks.md)
+The private individual repository contains the design notebook. The existing
+recording is the P3 journey; [P4](P4.md) distinguishes it from a final recording.

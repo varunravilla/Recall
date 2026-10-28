@@ -57,7 +57,8 @@ export class TrackingConcept {
     if (row.status !== "pending") {
       throw new NotPending("Only a pending tracking can be completed.");
     }
-    await this.trackings.updateOne({ _id: tracking }, { $set: { status: "completed" } });
+    const changed = await this.trackings.updateOne({ _id: tracking, owner: user, status: "pending" }, { $set: { status: "completed" } });
+    if (!changed.matchedCount) throw new NotPending("Only a pending tracking can be completed.");
     return { tracking };
   }
 
@@ -70,7 +71,8 @@ export class TrackingConcept {
     if (row.status !== "pending") {
       throw new NotPending("Only a pending tracking can be dismissed.");
     }
-    await this.trackings.updateOne({ _id: tracking }, { $set: { status: "dismissed" } });
+    const changed = await this.trackings.updateOne({ _id: tracking, owner: user, status: "pending" }, { $set: { status: "dismissed" } });
+    if (!changed.matchedCount) throw new NotPending("Only a pending tracking can be dismissed.");
     return { tracking };
   }
 

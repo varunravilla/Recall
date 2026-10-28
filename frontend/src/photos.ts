@@ -55,10 +55,14 @@ export async function importPhoto(image: Blob, timezone: string, signal: AbortSi
   if (!session) throw new ImportFailure("Log in before importing photos.", 401);
   const body = new FormData();
   body.set("session", session); body.set("timezone", timezone); body.set("consent", "gemini"); body.set("image", image, "photo");
-  const response = await fetch("/api/recall/photos/import", { method: "POST", body, signal });
-  const data = await response.json();
+  let response: Response;
+  try { response = await fetch("/api/recall/photos/import", { method: "POST", body, signal }); }
+  catch { throw new ImportFailure("Could not reach photo analysis. Your files are still queued.", 503); }
+  const data = await response.json().catch(() => null);
   if (response.status === 401) { sessionStorage.removeItem("recall.session"); sessionStorage.removeItem("recall.user"); }
-  if (!response.ok) throw new ImportFailure(importErrorMessage(response.status), response.status, data.retryAfter ?? 60);
+  if (!response.ok) throw new ImportFailure(importErrorMessage(response.status), response.status, data?.retryAfter ?? 60);
+  if (!data || !["added", "skipped", "duplicate"].includes(data.status))
+    throw new ImportFailure("Could not read these photos reliably. Please retry.", 502);
   return data;
 }
 

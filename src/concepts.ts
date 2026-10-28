@@ -1,3 +1,4 @@
+import { InvalidTime } from "./input.ts";
 import authenticatingSpec from "@design/concepts/Authenticating.md" with { type: "text" };
 import { AuthenticatingConcept, InvalidCredentials, AccountExists } from "./concepts/Authenticating.ts";
 import { conceptSet, registerConcept } from "@mit-sdg/sync-engine/assembly";
@@ -38,6 +39,7 @@ const collecting = registerConcept({
   class: CollectingConcept,
   spec: collectingSpec,
   refusals: {
+    INVALID_TIME: InvalidTime,
     EMPTY_CONTENT: EmptyContent,
     ALREADY_COLLECTED: AlreadyCollected,
     NOT_OWNER: CollectingNotOwner,
@@ -47,7 +49,7 @@ const collecting = registerConcept({
 const interpreting = registerConcept({
   class: InterpretingConcept,
   spec: interpretingSpec,
-  refusals: { NOT_PROPOSED: NotProposed },
+  refusals: { INVALID_TIME: InvalidTime, NOT_PROPOSED: NotProposed },
 });
 
 const tracking = registerConcept({
@@ -65,6 +67,7 @@ const reminding = registerConcept({
   spec: remindingSpec,
   refusals: {
     NOT_OWNER: RemindingNotOwner,
+    INVALID_TIME: InvalidTime,
     NOT_SCHEDULED: NotScheduled,
     NOT_YET: NotYet,
     NOT_DUE: NotDue,

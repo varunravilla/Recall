@@ -63,3 +63,38 @@ test("pause during quota wait sends nothing and restores already prepared photos
   });
   expect(sent).toBe(0); expect([...restored]).toEqual([1]);
 });
+
+test("preparation failure during an active send propagates after the accepted batch finishes", async () => {
+  let prepares = 0; const saved: number[] = [];
+  const work = runImportPipeline<number>({
+    prepare: async () => { if (++prepares === 2) throw new Error("decoder failed"); return [1]; },
+    send: async batch => { saved.push(...batch); }, wait: async () => {}, stopped: () => false, restore: () => {},
+  });
+  await expect(work).rejects.toThrow("decoder failed");
+  expect(saved).toEqual([1]);
+});
+test("pause before initial preparation finishes restores the photo without sending", async () => {
+  let stop = false; let sends = 0; const finish = deferred(); const restored: number[] = [];
+  const work = runImportPipeline<number>({
+    prepare: async () => { await finish.promise; return [1]; }, send: async () => { sends++; },
+    wait: async () => {}, stopped: () => stop, restore: batch => restored.push(...batch),
+  });
+  stop = true; finish.resolve(); await work;
+  expect(sends).toBe(0); expect(restored).toEqual([1]);
+});
+test("failed quota wait restores the current batch", async () => {
+  const restored = new Set<number>();
+  await expect(runImportPipeline<number>({
+    prepare: async () => [1], send: async () => { throw new Error("Should not send"); },
+    wait: async () => { throw new Error("wait failed"); }, stopped: () => false,
+    restore: batch => batch.forEach(id => restored.add(id)),
+  })).rejects.toThrow("wait failed");
+  expect([...restored]).toEqual([1]);
+});
+test("an empty queue neither waits for quota nor sends a request", async () => {
+  let waits = 0; let sends = 0;
+  await runImportPipeline<number>({ prepare: async () => [], send: async () => { sends++; },
+    wait: async () => { waits++; }, stopped: () => false, restore: () => {},
+  });
+  expect(waits).toBe(0); expect(sends).toBe(0);
+});

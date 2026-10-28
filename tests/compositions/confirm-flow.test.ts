@@ -49,7 +49,7 @@ test("confirm chains track and schedule", async () => {
     item,
     content: "Concert tickets on sale soon",
     collectedAt: new Date(),
-    kind: "buy",
+    kind: "event",
     summary: "Buy tickets",
     relevantAt: at,
   });

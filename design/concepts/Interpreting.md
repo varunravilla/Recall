@@ -10,6 +10,16 @@ An interpretation is proposed for an item. While it is proposed, the user may re
 confirm, or reject it. After confirmation or rejection, the interpretation cannot be
 changed through propose again on the same row without a new proposal.
 
+**Design decisions and guarantees.**
+
+An interpretation refers to an opaque item and does not know its owner. Recall
+binds that item to a collection and authorizes it before invoking mutations.
+`proposed` permits revision, confirmation or rejection. Both terminal states refuse
+further changes on that row. Conditional database updates enforce that rule even
+when two requests arrive together. An absent relevantAt is an honest undated
+interpretation, not a default current time. Queries return null for absence so
+clients can distinguish a Found idea from a dated reminder.
+
 ## Types
 
 ```types
@@ -39,6 +49,9 @@ remove (interpretation: Interpretation) : returns (interpretation: Interpretatio
 
 
 propose (item: Item, kind: String, summary: String, relevantAt?: DateTime) : returns (interpretation: Interpretation)
+  where supplied relevantAt is not a finite timestamp with a timezone
+  then
+    refuses INVALID_TIME "Use a valid timestamp with a timezone."
   where true
   then
     add a new interpretation for item with kind, summary, relevantAt, and status "proposed"
@@ -54,6 +67,9 @@ confirm (interpretation: Interpretation) : returns (interpretation: Interpretati
     returns interpretation
 
 revise (interpretation: Interpretation, kind: String, summary: String, relevantAt?: DateTime) : returns (interpretation: Interpretation)
+  where supplied relevantAt is not a finite timestamp with a timezone
+  then
+    refuses INVALID_TIME "Use a valid timestamp with a timezone."
   where interpretation does not exist or status is not "proposed"
   then
     refuses NOT_PROPOSED "Only a proposed interpretation can be revised."

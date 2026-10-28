@@ -9,6 +9,8 @@ export class AuthenticatingConcept {
     this.accounts = db.collection<Account>("authenticating.accounts");
   }
   async register({ username, password }: { username: string; password: string }) {
+    if (typeof username !== "string" || typeof password !== "string")
+      throw new InvalidCredentials("Use a username and password.");
     username = username.trim().toLowerCase();
     if (!/^[a-z0-9_-]{3,40}$/.test(username) || password.length < 12 || password.length > 128)
       throw new InvalidCredentials("Use a 3–40 character username and a 12–128 character password.");
@@ -23,6 +25,8 @@ export class AuthenticatingConcept {
     return { user };
   }
   async login({ username, password }: { username: string; password: string }) {
+    if (typeof username !== "string" || typeof password !== "string")
+      throw new InvalidCredentials("Username or password is incorrect.");
     const account = await this.accounts.findOne({ username: username.trim().toLowerCase() });
     if (password.length > 128 || !account || !await Bun.password.verify(password, account.passwordHash))
       throw new InvalidCredentials("Username or password is incorrect.");

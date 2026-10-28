@@ -8,6 +8,14 @@ Protect a persistent account with a password.
 
 Maya registers a username and password. Logging in with that password returns the same account id; a wrong password grants no access.
 
+**Design decisions and guarantees.**
+
+An account id is independent of its displayed username, so a fresh login resolves
+to the same collection owner. Usernames normalize before the unique lookup.
+Passwords are hashed with Argon2id and never returned. Unknown accounts and wrong
+passwords share the same refusal. This concept establishes identity; it does not
+issue sessions or decide whether an account owns a screenshot.
+
 ## Types
 
 ```types

@@ -116,7 +116,7 @@ async function remove() {
       </div>
       <div class="field-row">
         <label for="summary" class="field-name">Action</label>
-        <input id="summary" v-model="summary" />
+        <input id="summary" v-model="summary" maxlength="240" />
       </div>
       <div class="field-row">
         <label for="time" class="field-name">Relevant time</label>

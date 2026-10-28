@@ -16,6 +16,7 @@ const content = ref("");
 const summary = ref("");
 const tracking = ref("");
 const trackingStatus = ref("");
+const interpretationStatus = ref("");
 const reminderStatus = ref("");
 const relevantAt = ref("");
 const collectedAt = ref("");
@@ -40,6 +41,7 @@ async function load() {
   content.value = item.content;
   collectedAt.value = item.collectedAt;
   summary.value = item.interpretationRow?.summary ?? "";
+  interpretationStatus.value = item.interpretationRow?.status ?? "";
   relevantAt.value = item.reminderRow?.at ?? item.interpretationRow?.relevantAt ?? "";
   tracking.value = item.trackingRow?.tracking ?? "";
   trackingStatus.value = item.trackingRow?.status ?? "";
@@ -104,7 +106,7 @@ async function dismiss() {
     <p v-if="error" class="error" role="alert">{{ error }}</p>
     <article v-if="content" class="card detail-card">
       <SavedPhoto :collection="collection" :caption="content" />
-      <div class="detail-card__body"><span class="badge" :class="{'badge--due': reminderStatus === 'due'}">{{ reminderStatus === 'due' ? 'Due now' : trackingStatus || (!relevantAt ? 'Found' : 'Saved') }}</span>
+      <div class="detail-card__body"><span class="badge" :class="{'badge--due': reminderStatus === 'due'}">{{ interpretationStatus === 'rejected' ? 'Ignored' : reminderStatus === 'due' ? 'Due now' : trackingStatus || (!relevantAt ? 'Found' : 'Saved') }}</span>
         <h2 class="detail-title">{{ summary || 'Saved photo' }}</h2>
         <details class="caption-details"><summary>Photo details</summary><p class="preview-text">{{ content }}</p><p v-if="collectedAt" class="fine-print">Saved {{ new Date(collectedAt).toLocaleDateString() }}</p></details>
       </div>
@@ -116,7 +118,8 @@ async function dismiss() {
       <p v-if="notice" class="success-notice" role="status">{{ notice }}</p>
       <button class="btn-primary btn-block" :disabled="loading" @click="complete">Mark complete</button><button type="button" class="btn-text btn-block" :disabled="loading" @click="dismiss">No longer interested</button>
     </section>
-    <p v-if="content && !relevantAt && !tracking" class="muted">Saved without a date. No reminder is set.</p>
+    <p v-if="content && interpretationStatus === 'rejected'" class="muted">You ignored this suggestion. No reminder is set.</p>
+    <p v-else-if="content && !relevantAt && !tracking" class="muted">Saved without a date. No reminder is set.</p>
     <button v-if="content" class="btn-delete delete-item-link" :disabled="loading" @click="confirmDelete = true; deleteError = ''">Delete item</button>
     <DeleteItemDialog :open="confirmDelete" :title="summary || 'Saved item'" :busy="loading" :error="deleteError" @cancel="confirmDelete = false" @confirm="remove" />
   </PageShell>

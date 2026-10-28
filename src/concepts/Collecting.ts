@@ -1,3 +1,4 @@
+import { instant } from "../input.ts";
 import { decodeImage } from "../photos/image.ts";
 import { MongoServerError, type Collection, type Db } from "mongodb";
 
@@ -40,6 +41,7 @@ export class CollectingConcept {
     content: string;
     collectedAt: Date;
   }) {
+    collectedAt = instant(collectedAt);
     await this.#ensureIndex();
     if (content.trim().length === 0) {
       throw new EmptyContent("Caption cannot be empty.");
@@ -65,6 +67,7 @@ export class CollectingConcept {
   async addPhoto({ user, item, content, collectedAt, imageData, mimeType }: {
     user: string; item: string; content: string; collectedAt: Date; imageData: string; mimeType: string;
   }) {
+    collectedAt = instant(collectedAt);
     if (!content.trim() || content.length > 20000 || !decodeImage(imageData, mimeType))
       throw new EmptyContent("Caption or image is invalid.");
     await this.#ensureIndex();

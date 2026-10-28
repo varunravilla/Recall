@@ -1,0 +1,87 @@
+{
+  "run": "2026-10-27T00:36:08.884Z",
+  "origin": "http://127.0.0.1:3189/",
+  "scope": "Synthetic HTTP checks; no AI requests, browser interaction, personal photos, deployment changes, or verification of deployed Git identity. Two synthetic accounts remain because account deletion is not implemented.",
+  "checks": [
+    {
+      "name": "health and MongoDB",
+      "passed": true
+    },
+    {
+      "name": "homepage",
+      "passed": true
+    },
+    {
+      "name": "wrong password refused",
+      "passed": true
+    },
+    {
+      "name": "forged session refused",
+      "passed": true
+    },
+    {
+      "name": "missing fields refused",
+      "passed": true
+    },
+    {
+      "name": "proposal readable",
+      "passed": true
+    },
+    {
+      "name": "foreign review/get denied without server error",
+      "passed": true,
+      "detail": "HTTP 404"
+    },
+    {
+      "name": "foreign saved/get denied without server error",
+      "passed": true,
+      "detail": "HTTP 404"
+    },
+    {
+      "name": "foreign delete refused",
+      "passed": true
+    },
+    {
+      "name": "refused deletion preserved owner item",
+      "passed": true
+    },
+    {
+      "name": "malformed reminder refused before confirmation",
+      "passed": true,
+      "detail": "HTTP 400"
+    },
+    {
+      "name": "invalid confirmation leaves proposal unchanged",
+      "passed": true
+    },
+    {
+      "name": "confirm creates tracking and reminder",
+      "passed": true
+    },
+    {
+      "name": "HTTP timestamp becomes due",
+      "passed": true
+    },
+    {
+      "name": "complete saved item",
+      "passed": true
+    },
+    {
+      "name": "saved data survives a fresh login",
+      "passed": true
+    },
+    {
+      "name": "direct item URL serves Vue entry",
+      "passed": true
+    },
+    {
+      "name": "synthetic item cleanup",
+      "passed": true
+    },
+    {
+      "name": "deleted item unavailable",
+      "passed": true
+    }
+  ],
+  "passed": true
+}

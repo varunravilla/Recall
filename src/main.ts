@@ -5,14 +5,18 @@ import { createHttpHandler } from "@mit-sdg/sync-engine-http/handler";
 import { assembleApplication } from "./assembly.ts";
 import { policy } from "./http.ts";
 import { client, db } from "./db.ts";
+import { normalizeStoredDates } from "./migrations/dates.ts";
+import { routeApi } from "./routing.ts";
 
 await client.connect();
+await normalizeStoredDates(db);
 
 const application = assembleApplication();
 const gateway = createGateway({ application });
 const api = createHttpHandler({ application, gateway, policy });
 
 const photos = createPhotoHandler({ gateway });
+const publicApi = routeApi({ api, photos });
 
 const dist = `${import.meta.dir}/../frontend/dist`;
 const server = Bun.serve({
@@ -31,16 +35,7 @@ const server = Bun.serve({
   hostname: process.env.HOST ?? "127.0.0.1",
   port: Number(process.env.PORT ?? 3000),
   routes: {
-    "/api/recall/photos/import": photos,
-    "/api/recall/photos/import-batch": photos,
-    "/api/recall/photos/image": photos,
-    "/api/recall/photos/status": photos,
-    "/api/recall/photos/add": photos,
-    "/api/*": (request: Request) => {
-      const path = new URL(request.url).pathname.replace(/\/+$/, "");
-      if (["/api/recall/photos/add", "/api/recall/photos/found"].includes(path)) return Response.json({ error: "Use photo import." }, { status: 404 });
-      return api(request);
-    },
+    "/api/*": publicApi,
     "/health": async () => {
       try {
         await db.command({ ping: 1 });

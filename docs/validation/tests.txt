@@ -1,104 +1,417 @@
-Recall P3 validation
-Run: 2026-10-19T17:51:17.217Z
-Command: bun run test:memory
+Recall P4 validation
+Run: 2026-10-27T01:17:43.876Z
+Command: bun run test:memory --coverage --coverage-reporter=text
 Exit: 0
 
 bun test v1.4.2 (744846f84)
-$ TEST_MONGO=memory bun test
+$ TEST_MONGO=memory bun test --coverage "--coverage-reporter=text"
 
 tests/frontend/import.test.ts:
-(pass) photo selection accepts image formats and rejects empty, oversized or non-image files [1.26ms]
-(pass) large source images are prepared small enough for a ten-photo request [3.11ms]
+(pass) photo selection accepts image formats and rejects empty, oversized or non-image files [0.70ms]
+(pass) large source images are prepared small enough for a ten-photo request [3.22ms]
+
+tests/frontend/transport.test.ts:
+(pass) JSON API sends session in a body, never in the URL, and reads a successful result [2.11ms]
+(pass) API handles empty response without a parser error [0.09ms]
+(pass) API handles non-JSON response without a parser error [0.27ms]
+(pass) network failure becomes a recoverable API message [0.08ms]
+(pass) HTTP 400 gives a recovery message instead of INVALID_REQUEST [0.35ms]
+(pass) HTTP 403 gives a recovery message instead of FORBIDDEN [0.03ms]
+(pass) HTTP 404 gives a recovery message instead of NOT_FOUND [0.02ms]
+(pass) HTTP 409 gives a recovery message instead of CONFLICT [0.01ms]
+(pass) HTTP 500 gives a recovery message instead of INTERNAL_ERROR [0.01ms]
+(pass) protected 401 clears the expired identity and returns to login [0.10ms]
+(pass) wrong login does not redirect in a loop or erase a separate active session [0.07ms]
+(pass) login stores a session only after successful authentication [0.20ms]
+(pass) registration stores a session only after successful authentication [0.03ms]
+(pass) blank account name never sends credentials [0.04ms]
+(pass) failed authentication does not store a forged session [0.06ms]
+(pass) logout clears local consent and identity and revokes the old token [0.12ms]
+(pass) status response detects an unconfigured analyzer and expired status clears identity [0.67ms]
+(pass) single import refuses a missing session before upload [0.54ms]
+(pass) batch import refuses a missing session before upload [0.24ms]
+(pass) single-photo added response survives transport unchanged [0.56ms]
+(pass) single-photo skipped response survives transport unchanged [0.02ms]
+(pass) single-photo duplicate response survives transport unchanged [0.02ms]
+(pass) multipart batch binds ids to images, sends consent, and preserves reversed response identities [0.27ms]
+(pass) batch response refuses missing id instead of attaching an incorrect result [0.29ms]
+(pass) batch response refuses foreign id instead of attaching an incorrect result [0.03ms]
+(pass) batch response refuses unsupported status instead of attaching an incorrect result [0.03ms]
+(pass) batch response refuses null result instead of attaching an incorrect result [0.03ms]
+(pass) batch response refuses not an array instead of attaching an incorrect result [0.02ms]
+(pass) single upload exposes recoverable 401 with retry information [0.12ms]
+(pass) single upload exposes recoverable 409 with retry information [0.06ms]
+(pass) single upload exposes recoverable 413 with retry information [0.04ms]
+(pass) single upload exposes recoverable 429 with retry information [0.01ms]
+(pass) single upload exposes recoverable 502 with retry information [0.02ms]
+(pass) single upload exposes recoverable 503 with retry information [0.02ms]
+(pass) batch upload exposes recoverable 401 with retry information [0.02ms]
+(pass) batch upload exposes recoverable 409 with retry information [0.02ms]
+(pass) batch upload exposes recoverable 413 with retry information [0.02ms]
+(pass) batch upload exposes recoverable 429 with retry information [0.02ms]
+(pass) batch upload exposes recoverable 502 with retry information [0.02ms]
+(pass) batch upload exposes recoverable 503 with retry information [0.02ms]
+(pass) single upload survives a proxy HTML response without leaking it [0.09ms]
+(pass) batch upload survives a proxy HTML response without leaking it [0.03ms]
+(pass) single upload network failure preserves retry status [0.11ms]
+(pass) batch upload network failure preserves retry status [0.09ms]
+(pass) undated proposed item has an explicit Suggested state and appropriate detail route [0.09ms]
+(pass) undated rejected item has an explicit Ignored state and appropriate detail route
+(pass) undated confirmed item has an explicit Found state and appropriate detail route
 
 tests/frontend/import-pipeline.test.ts:
-(pass) prepares one batch ahead during AI and sends batches in order [0.94ms]
-(pass) pause finishes the active request and restores prefetched files [0.20ms]
-(pass) a failed request restores current and prefetched batches without discarding photos [0.79ms]
-(pass) pause during quota wait sends nothing and restores already prepared photos [0.10ms]
+(pass) photos added during the last request import without clearing or restarting [0.37ms]
+(pass) prepares one batch ahead during AI and sends batches in order [0.13ms]
+(pass) pause finishes the active request and restores prefetched files [0.15ms]
+(pass) a failed request restores current and prefetched batches without discarding photos [0.22ms]
+(pass) pause during quota wait sends nothing and restores already prepared photos [0.09ms]
+(pass) preparation failure during an active send propagates after the accepted batch finishes [0.12ms]
+(pass) pause before initial preparation finishes restores the photo without sending [0.09ms]
+(pass) failed quota wait restores the current batch [0.09ms]
+(pass) an empty queue neither waits for quota nor sends a request [0.06ms]
 
 tests/compositions/security.test.ts:
-(pass) two accounts cannot read, revise, confirm, or reject each other's items using mismatched IDs [500.72ms]
+(pass) two accounts cannot read, revise, confirm, or reject each other's items using mismatched IDs [485.34ms]
 
 tests/compositions/confirm-flow.test.ts:
-(pass) confirm chains track and schedule [306.86ms]
+(pass) confirm chains track and schedule [320.96ms]
 
 tests/compositions/delete-flow.test.ts:
-(pass) delete is owner-only and removes images plus every historical interpretation, tracking and reminder [520.84ms]
+(pass) delete is owner-only and removes images plus every historical interpretation, tracking and reminder [527.37ms]
+
+tests/http/admission.test.ts:
+(pass) register refuses missing username before any persistent write [5.60ms]
+(pass) register refuses an object in username before any persistent write [3.89ms]
+(pass) register refuses missing password before any persistent write [4.25ms]
+(pass) register refuses an object in password before any persistent write [3.59ms]
+(pass) start refuses missing username before any persistent write [3.81ms]
+(pass) start refuses an object in username before any persistent write [3.35ms]
+(pass) start refuses missing password before any persistent write [3.80ms]
+(pass) start refuses an object in password before any persistent write [3.58ms]
+(pass) current refuses missing session before any persistent write [3.88ms]
+(pass) current refuses an object in session before any persistent write [3.36ms]
+(pass) end refuses missing session before any persistent write [4.28ms]
+(pass) end refuses an object in session before any persistent write [3.38ms]
+(pass) captions/add refuses missing session before any persistent write [3.78ms]
+(pass) captions/add refuses an object in session before any persistent write [4.25ms]
+(pass) captions/add refuses missing item before any persistent write [8.54ms]
+(pass) captions/add refuses an object in item before any persistent write [3.51ms]
+(pass) captions/add refuses missing content before any persistent write [3.60ms]
+(pass) captions/add refuses an object in content before any persistent write [3.14ms]
+(pass) captions/add refuses missing collectedAt before any persistent write [3.51ms]
+(pass) captions/add refuses an object in collectedAt before any persistent write [2.84ms]
+(pass) captions/add refuses missing kind before any persistent write [3.27ms]
+(pass) captions/add refuses an object in kind before any persistent write [3.22ms]
+(pass) captions/add refuses missing summary before any persistent write [3.25ms]
+(pass) captions/add refuses an object in summary before any persistent write [2.91ms]
+(pass) captions/add refuses missing relevantAt before any persistent write [3.76ms]
+(pass) captions/add refuses an object in relevantAt before any persistent write [3.41ms]
+(pass) inbox/list refuses missing session before any persistent write [3.73ms]
+(pass) inbox/list refuses an object in session before any persistent write [3.27ms]
+(pass) library/list refuses missing session before any persistent write [3.56ms]
+(pass) library/list refuses an object in session before any persistent write [3.29ms]
+(pass) review/get refuses missing session before any persistent write [3.33ms]
+(pass) review/get refuses an object in session before any persistent write [2.73ms]
+(pass) review/get refuses missing collection before any persistent write [3.16ms]
+(pass) review/get refuses an object in collection before any persistent write [2.87ms]
+(pass) review/revise refuses missing session before any persistent write [3.51ms]
+(pass) review/revise refuses an object in session before any persistent write [2.55ms]
+(pass) review/revise refuses missing collection before any persistent write [2.94ms]
+(pass) review/revise refuses an object in collection before any persistent write [2.55ms]
+(pass) review/revise refuses missing interpretation before any persistent write [3.07ms]
+(pass) review/revise refuses an object in interpretation before any persistent write [3.13ms]
+(pass) review/revise refuses missing kind before any persistent write [3.39ms]
+(pass) review/revise refuses an object in kind before any persistent write [2.96ms]
+(pass) review/revise refuses missing summary before any persistent write [3.12ms]
+(pass) review/revise refuses an object in summary before any persistent write [2.48ms]
+(pass) review/revise refuses missing relevantAt before any persistent write [3.86ms]
+(pass) review/revise refuses an object in relevantAt before any persistent write [3.53ms]
+(pass) review/confirm refuses missing session before any persistent write [3.22ms]
+(pass) review/confirm refuses an object in session before any persistent write [2.45ms]
+(pass) review/confirm refuses missing collection before any persistent write [3.23ms]
+(pass) review/confirm refuses an object in collection before any persistent write [2.32ms]
+(pass) review/confirm refuses missing interpretation before any persistent write [2.82ms]
+(pass) review/confirm refuses an object in interpretation before any persistent write [2.58ms]
+(pass) review/confirm refuses missing at before any persistent write [2.93ms]
+(pass) review/confirm refuses an object in at before any persistent write [2.44ms]
+(pass) review/reject refuses missing session before any persistent write [2.79ms]
+(pass) review/reject refuses an object in session before any persistent write [2.41ms]
+(pass) review/reject refuses missing collection before any persistent write [2.79ms]
+(pass) review/reject refuses an object in collection before any persistent write [2.30ms]
+(pass) review/reject refuses missing interpretation before any persistent write [2.82ms]
+(pass) review/reject refuses an object in interpretation before any persistent write [2.46ms]
+(pass) saved/get refuses missing session before any persistent write [2.91ms]
+(pass) saved/get refuses an object in session before any persistent write [4.82ms]
+(pass) saved/get refuses missing collection before any persistent write [3.04ms]
+(pass) saved/get refuses an object in collection before any persistent write [2.20ms]
+(pass) saved/delete refuses missing session before any persistent write [2.52ms]
+(pass) saved/delete refuses an object in session before any persistent write [1.95ms]
+(pass) saved/delete refuses missing collection before any persistent write [2.51ms]
+(pass) saved/delete refuses an object in collection before any persistent write [2.15ms]
+(pass) saved/complete refuses missing session before any persistent write [2.67ms]
+(pass) saved/complete refuses an object in session before any persistent write [2.01ms]
+(pass) saved/complete refuses missing collection before any persistent write [2.41ms]
+(pass) saved/complete refuses an object in collection before any persistent write [1.88ms]
+(pass) saved/complete refuses missing tracking before any persistent write [2.24ms]
+(pass) saved/complete refuses an object in tracking before any persistent write [2.09ms]
+(pass) saved/dismiss refuses missing session before any persistent write [2.70ms]
+(pass) saved/dismiss refuses an object in session before any persistent write [2.45ms]
+(pass) saved/dismiss refuses missing collection before any persistent write [2.65ms]
+(pass) saved/dismiss refuses an object in collection before any persistent write [2.29ms]
+(pass) saved/dismiss refuses missing tracking before any persistent write [2.62ms]
+(pass) saved/dismiss refuses an object in tracking before any persistent write [2.21ms]
+(pass) saved/reschedule refuses missing session before any persistent write [2.59ms]
+(pass) saved/reschedule refuses an object in session before any persistent write [2.25ms]
+(pass) saved/reschedule refuses missing collection before any persistent write [2.52ms]
+(pass) saved/reschedule refuses an object in collection before any persistent write [2.38ms]
+(pass) saved/reschedule refuses missing tracking before any persistent write [2.73ms]
+(pass) saved/reschedule refuses an object in tracking before any persistent write [2.31ms]
+(pass) saved/reschedule refuses missing at before any persistent write [2.66ms]
+(pass) saved/reschedule refuses an object in at before any persistent write [2.30ms]
+(pass) sweep/tick refuses missing session before any persistent write [2.62ms]
+(pass) sweep/tick refuses an object in session before any persistent write [2.28ms]
+(pass) photos/get refuses missing session before any persistent write [2.67ms]
+(pass) photos/get refuses an object in session before any persistent write [2.30ms]
+(pass) photos/get refuses missing collection before any persistent write [2.82ms]
+(pass) photos/get refuses an object in collection before any persistent write [2.32ms]
+(pass) photos/find refuses missing session before any persistent write [2.60ms]
+(pass) photos/find refuses an object in session before any persistent write [2.17ms]
+(pass) photos/find refuses missing item before any persistent write [2.56ms]
+(pass) photos/find refuses an object in item before any persistent write [2.23ms]
+(pass) HTTP rejects non-object JSON null [0.22ms]
+(pass) HTTP rejects non-object JSON [] [0.06ms]
+(pass) HTTP rejects non-object JSON "text" [0.03ms]
+(pass) HTTP rejects non-object JSON 42 [0.03ms]
+(pass) HTTP rejects non-object JSON true [0.03ms]
+(pass) transport refuses broken JSON [2.84ms]
+(pass) transport refuses wrong content type [2.67ms]
+(pass) transport refuses GET mutation [3.73ms]
+(pass) transport refuses PUT mutation [1.84ms]
+
+tests/http/routing.test.ts:
+(pass) public router blocks internal photo add using POST [0.20ms]
+(pass) public router blocks internal photo add using GET [0.01ms]
+(pass) public router blocks internal photo add using PUT
+(pass) public router blocks internal photo add/ using POST
+(pass) public router blocks internal photo add/ using GET
+(pass) public router blocks internal photo add/ using PUT
+(pass) public router blocks internal photo add/// using POST
+(pass) public router blocks internal photo add/// using GET
+(pass) public router blocks internal photo add/// using PUT
+(pass) public router blocks internal photo found using POST
+(pass) public router blocks internal photo found using GET
+(pass) public router blocks internal photo found using PUT
+(pass) public router blocks internal photo found/ using POST
+(pass) public router blocks internal photo found/ using GET
+(pass) public router blocks internal photo found/ using PUT
+(pass) public router blocks internal photo found/// using POST
+(pass) public router blocks internal photo found/// using GET
+(pass) public router blocks internal photo found/// using PUT
+(pass) public router sends import through the authenticated photo adapter [0.12ms]
+(pass) public router sends import-batch through the authenticated photo adapter [0.01ms]
+(pass) public router sends image through the authenticated photo adapter
+(pass) public router sends status through the authenticated photo adapter
+(pass) ordinary endpoints preserve the HTTP handler's status and response [0.10ms]
+
+tests/http/transitions.test.ts:
+(pass) delete removes the complete proposed item history and a repeated delete is refused [260.00ms]
+(pass) delete removes the complete rejected item history and a repeated delete is refused [134.18ms]
+(pass) delete removes the complete pending item history and a repeated delete is refused [205.05ms]
+(pass) delete removes the complete completed item history and a repeated delete is refused [142.76ms]
+(pass) delete removes the complete dismissed item history and a repeated delete is refused [139.02ms]
+(pass) complete then complete refuses without changing terminal state [142.07ms]
+(pass) complete then dismiss refuses without changing terminal state [141.63ms]
+(pass) complete then reschedule refuses without changing terminal state [162.80ms]
+(pass) dismiss then complete refuses without changing terminal state [165.26ms]
+(pass) dismiss then dismiss refuses without changing terminal state [149.12ms]
+(pass) dismiss then reschedule refuses without changing terminal state [137.27ms]
+(pass) event proposal preserves edits through confirmation and fresh login [279.55ms]
+(pass) place proposal preserves edits through confirmation and fresh login [255.63ms]
+(pass) product proposal preserves edits through confirmation and fresh login [260.93ms]
+(pass) invalid capture summary ( ) leaves no orphan collection [128.51ms]
+(pass) invalid capture summary (xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx) leaves no orphan collection [131.39ms]
+(pass) invalid capture kind (unsupported) leaves no orphan collection [127.79ms]
+(pass) invalid capture content ( ) leaves no orphan collection [128.83ms]
+(pass) invalid capture content (xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx) leaves no orphan collection [132.43ms]
+(pass) invalid capture relevantAt (2026-02-30T12:00:00Z) leaves no orphan collection [128.71ms]
+(pass) invalid capture collectedAt (2026-10-26T24:00:00Z) leaves no orphan collection [127.47ms]
+(pass) due reminder refuses reschedule without altering the scheduled instant [136.52ms]
+(pass) concurrent complete and dismiss produce one resolution and cancel its reminder [138.22ms]
+(pass) session expiry at the exact boundary blocks HTTP reads and mutations without data loss [244.33ms]
+(pass) caller-supplied user fields cannot impersonate a different collection owner [269.91ms]
+
+tests/http/endpoints.test.ts:
+(pass) every ordinary protected HTTP endpoint refuses forged sessions without writes [19.42ms]
+(pass) review, rejection, due sweep, completion and deletion are observable through HTTP [493.52ms]
+(pass) foreign and mismatched IDs cannot mutate, read, or delete an owner's records [272.67ms]
+(pass) simultaneous confirmation or resolution has exactly one successful transition [138.48ms]
+
+tests/http/input-times.test.ts:
+(pass) finite zoned timestamp accepted: 2028-02-29T23:59:59Z [3.37ms]
+(pass) finite zoned timestamp accepted: 2000-02-29T12:00:00Z [0.01ms]
+(pass) finite zoned timestamp accepted: 2026-01-01T00:00:00.123Z
+(pass) finite zoned timestamp accepted: 2026-10-26T12:00:00+05:45
+(pass) finite zoned timestamp accepted: 2026-10-26T12:00:00-04:00
+(pass) finite zoned timestamp accepted: Thu Jan 01 1970 00:00:00 GMT+0000 (Coordinated Universal Time) [0.01ms]
+(pass) timestamp refuses non-leap February 29 [0.84ms]
+(pass) timestamp refuses non-leap century [0.01ms]
+(pass) timestamp refuses February 30
+(pass) timestamp refuses April 31
+(pass) timestamp refuses month zero
+(pass) timestamp refuses month thirteen
+(pass) timestamp refuses day zero
+(pass) timestamp refuses 24-hour rollover
+(pass) timestamp refuses minute overflow
+(pass) timestamp refuses second overflow
+(pass) timestamp refuses missing timezone
+(pass) timestamp refuses date only
+(pass) timestamp refuses invalid Date
+(pass) timestamp refuses null
+(pass) timestamp refuses numeric epoch
+(pass) timestamp refuses empty
+(pass) timestamp refuses object
+(pass) timestamp refuses array
+
+tests/http/date-migration.test.ts:
+(pass) startup migrates old string timestamps once and preserves invalid/absent values [50.62ms]
 
 tests/http/journey.test.ts:
-(pass) HTTP journey: validation, register, capture, edit, confirm, reschedule, persistence, dismiss, logout [595.30ms]
+(pass) HTTP journey: validation, register, capture, edit, confirm, reschedule, persistence, dismiss, logout [582.47ms]
 
 tests/concepts/reminding.test.ts:
-(pass) sweepDue marks scheduled reminders as due [68.83ms]
-(pass) reschedule, due, acknowledge, and invalid transitions preserve state [49.94ms]
-(pass) cancelled reminder never surfaces in a later sweep [45.53ms]
-(pass) removeItem deletes every status for one owner and item only [40.46ms]
+(pass) sweepDue marks scheduled reminders as due [65.61ms]
+(pass) reschedule, due, acknowledge, and invalid transitions preserve state [52.76ms]
+(pass) cancelled reminder never surfaces in a later sweep [47.97ms]
+(pass) removeItem deletes every status for one owner and item only [45.61ms]
 
 tests/concepts/sessioning.test.ts:
-(pass) session principle: start, resolve, expire without changing subject [0.56ms]
-(pass) logout revokes exactly one session and repeated logout fails [0.10ms]
+(pass) session principle: start, resolve, expire without changing subject [0.31ms]
+(pass) logout revokes exactly one session and repeated logout fails [0.20ms]
+
+tests/concepts/auth-boundaries.test.ts:
+(pass) password of exactly 12 characters registers and authenticates [417.87ms]
+(pass) password of exactly 128 characters registers and authenticates [347.91ms]
+(pass) registration refuses short password without creating an account [3.12ms]
+(pass) registration refuses long password without creating an account [1.14ms]
+(pass) registration refuses short username without creating an account [1.09ms]
+(pass) registration refuses long username without creating an account [0.89ms]
+(pass) registration refuses punctuation username without creating an account [0.81ms]
+(pass) concept registration/login refuse non-string username: null [0.94ms]
+(pass) concept registration/login refuse non-string username: 42 [0.79ms]
+(pass) concept registration/login refuse non-string username: {} [0.84ms]
+(pass) concept registration/login refuse non-string username: [] [0.92ms]
+(pass) concept registration/login refuse non-string password: null [0.94ms]
+(pass) concept registration/login refuse non-string password: 42 [0.86ms]
+(pass) concept registration/login refuse non-string password: {} [0.89ms]
+(pass) concept registration/login refuse non-string password: [] [0.87ms]
+(pass) concurrent normalized registration creates one identity and does not replace its password [364.83ms]
+
+tests/concepts/date-validation.test.ts:
+(pass) invalid timestamps are refused by concepts without storing or changing records [144.53ms]
 
 tests/concepts/interpreting.test.ts:
-(pass) propose then confirm updates status [55.77ms]
-(pass) revise only works while proposed [31.89ms]
-(pass) confirm after reject is refused [30.22ms]
-(pass) terminal interpretations refuse revision, rejection and repeated confirmation without changes [30.96ms]
-(pass) remove deletes one interpretation in any state and is idempotent [34.36ms]
-(pass) absent dates remain null instead of becoming the creation timestamp [31.06ms]
+(pass) propose then confirm updates status [54.03ms]
+(pass) revise only works while proposed [31.86ms]
+(pass) confirm after reject is refused [33.33ms]
+(pass) terminal interpretations refuse revision, rejection and repeated confirmation without changes [35.06ms]
+(pass) remove deletes one interpretation in any state and is idempotent [30.45ms]
+(pass) absent dates remain null instead of becoming the creation timestamp [33.30ms]
 
 tests/concepts/tracking.test.ts:
-(pass) track then complete resolves pending item [58.62ms]
-(pass) duplicate pending track is refused [32.56ms]
-(pass) dismiss, unauthorized actions, and repeated resolution [34.55ms]
-(pass) remove requires ownership, handles resolved rows, and preserves other trackings [35.87ms]
+(pass) track then complete resolves pending item [64.25ms]
+(pass) duplicate pending track is refused [30.89ms]
+(pass) dismiss, unauthorized actions, and repeated resolution [34.61ms]
+(pass) remove requires ownership, handles resolved rows, and preserves other trackings [29.74ms]
 
 tests/concepts/collecting.test.ts:
-(pass) add stores a caption for the owner [65.05ms]
-(pass) empty content is refused [30.60ms]
-(pass) duplicate item for same user is refused [29.70ms]
-(pass) remove enforces ownership and leaves state unchanged on failure [34.34ms]
-(pass) photo action validates its own input, persists privately, and refuses duplicates without replacement [40.49ms]
+(pass) add stores a caption for the owner [53.64ms]
+(pass) empty content is refused [28.12ms]
+(pass) duplicate item for same user is refused [27.69ms]
+(pass) remove enforces ownership and leaves state unchanged on failure [34.12ms]
+(pass) photo action validates its own input, persists privately, and refuses duplicates without replacement [46.15ms]
 
 tests/concepts/authenticating.test.ts:
-(pass) register and login retain identity across instances; passwords are hashed [717.91ms]
-(pass) invalid registration has no side effect [3.40ms]
+(pass) register and login retain identity across instances; passwords are hashed [713.13ms]
+(pass) invalid registration has no side effect [2.33ms]
 
 tests/photos/pacing.test.ts:
-(pass) configured RPM shares a request window; unknown quotas do not add a fixed delay [0.20ms]
-(pass) quota backoff honors provider hints, grows without them, and resets on success [0.06ms]
+(pass) configured RPM shares a request window; unknown quotas do not add a fixed delay [2.96ms]
+(pass) quota backoff honors provider hints, grows without them, and resets on success [0.07ms]
 
 tests/photos/import.test.ts:
-(pass) generated import persists caption, action, time and image; deduplicates before AI; survives restart and isolates owners [541.19ms]
-(pass) expired, irrelevant and uncertain photos write neither image nor collection [136.52ms]
-(pass) bad sessions, consent, timezone and forged files are rejected before inference; raw AddPhoto HTTP is blocked [135.00ms]
-(pass) provider quota failure leaves nothing stored and supplies retry guidance [133.54ms]
-(pass) deadline is checked again after slow inference [127.72ms]
-(pass) simultaneous uploads from one account cannot race duplicate creation [129.73ms]
-(pass) undated finds retain image and caption without a reminder or fabricated date [134.82ms]
-(pass) logout during inference writes neither a dated item nor an undated find [263.56ms]
-(pass) one batched AI call matches reversed results to source images and deduplicates within/across batches [263.76ms]
-(pass) batch rejects bad ids/count/consent before AI and refuses unmatched results before any writes [128.26ms]
-(pass) batch keeps per-image outcomes and rechecks authentication after inference [279.15ms]
-(pass) batch quota cooldown is shared across accounts and never discards input [248.01ms]
-(pass) ten distinct images share one request; oversized aggregate payloads never call AI [192.02ms]
+(pass) generated import persists caption, action, time and image; deduplicates before AI; survives restart and isolates owners [571.32ms]
+(pass) expired, irrelevant and uncertain photos write neither image nor collection [143.99ms]
+(pass) bad sessions, consent, timezone and forged files are rejected before inference; raw AddPhoto HTTP is blocked [130.56ms]
+(pass) provider quota failure leaves nothing stored and supplies retry guidance [126.23ms]
+(pass) deadline is checked again after slow inference [127.51ms]
+(pass) simultaneous uploads from one account cannot race duplicate creation [129.77ms]
+(pass) undated finds retain image and caption without a reminder or fabricated date [136.01ms]
+(pass) logout during inference writes neither a dated item nor an undated find [258.00ms]
+(pass) one batched AI call matches reversed results to source images and deduplicates within/across batches [270.34ms]
+(pass) batch rejects bad ids/count/consent before AI and refuses unmatched results before any writes [129.06ms]
+(pass) batch keeps per-image outcomes and rechecks authentication after inference [252.07ms]
+(pass) batch quota cooldown is shared across accounts and never discards input [244.94ms]
+(pass) ten distinct images share one request; oversized aggregate payloads never call AI [197.73ms]
 
 tests/photos/time.test.ts:
-(pass) server resolves daylight saving and fractional timezone offsets [2.29ms]
-(pass) ambiguous, nonexistent and invalid local times are refused [0.47ms]
+(pass) server resolves daylight saving and fractional timezone offsets [2.02ms]
+(pass) ambiguous, nonexistent and invalid local times are refused [0.41ms]
 
 tests/photos/gemini.test.ts:
-(pass) filter rejects expired, irrelevant, uncertain, missing, invalid, past, and incoherent dates [0.14ms]
-(pass) strict response parser refuses malformed or unsupported AI output [0.09ms]
-(pass) Gemini receives image, server time, timezone, structured schema, and a server-only key [1.65ms]
-(pass) provider errors never expose key or raw response, and quota errors are retryable [1.07ms]
-(pass) undated useful finds are accepted without invented dates, expired items still skip [0.13ms]
-(pass) bad supplied wall times never turn into accepted undated finds [0.51ms]
-(pass) multi-image request uses explicit ids and parses reversed independent results [0.28ms]
-(pass) missing, duplicate, foreign ids and malformed analysis never match to the wrong image [0.14ms]
-(pass) provider retry hints support RetryInfo, not just numeric headers [0.18ms]
-(pass) provider supports ten independent photos and refuses an eleventh before sending [0.36ms]
+(pass) filter rejects expired, irrelevant, uncertain, missing, invalid, past, and incoherent dates [0.17ms]
+(pass) strict response parser refuses malformed or unsupported AI output [0.11ms]
+(pass) Gemini receives image, server time, timezone, structured schema, and a server-only key [2.00ms]
+(pass) provider errors never expose key or raw response, and quota errors are retryable [1.24ms]
+(pass) undated useful finds are accepted without invented dates, expired items still skip [0.08ms]
+(pass) bad supplied wall times never turn into accepted undated finds [0.64ms]
+(pass) multi-image request uses explicit ids and parses reversed independent results [0.77ms]
+(pass) missing, duplicate, foreign ids and malformed analysis never match to the wrong image [0.17ms]
+(pass) provider retry hints support RetryInfo, not just numeric headers [0.21ms]
+(pass) provider supports ten independent photos and refuses an eleventh before sending [0.37ms]
+--------------------------------------|---------|---------|-------------------
+File                                  | % Funcs | % Lines | Uncovered Line #s
+--------------------------------------|---------|---------|-------------------
+All files                             |   95.98 |   98.12 |
+ design/concepts/Authenticating.md    |  100.00 |  100.00 |
+ design/concepts/Collecting.md        |  100.00 |  100.00 |
+ design/concepts/Interpreting.md      |  100.00 |  100.00 |
+ design/concepts/Reminding.md         |  100.00 |  100.00 |
+ design/concepts/Sessioning.md        |  100.00 |  100.00 |
+ design/concepts/Tracking.md          |  100.00 |  100.00 |
+ frontend/src/api.ts                  |   40.00 |   63.33 | 45-53,57,65,69-77,81-85,89-96,100-103,107,111,115,207,214,239,243
+ frontend/src/importPipeline.ts       |  100.00 |  100.00 |
+ frontend/src/messages.ts             |  100.00 |  100.00 |
+ frontend/src/photos.ts               |  100.00 |  100.00 |
+ frontend/src/session.ts              |  100.00 |  100.00 |
+ src/compositions/Recall.ts           |  100.00 |  100.00 |
+ src/compositions/Sessions.ts         |  100.00 |  100.00 |
+ src/compositions/recall/Capture.ts   |  100.00 |  100.00 |
+ src/compositions/recall/Lifecycle.ts |  100.00 |  100.00 |
+ src/compositions/recall/Review.ts    |  100.00 |  100.00 |
+ src/compositions/recall/Saved.ts     |  100.00 |  100.00 |
+ src/compositions/recall/Views.ts     |  100.00 |  100.00 |
+ src/concepts.ts                      |  100.00 |  100.00 |
+ src/concepts/Authenticating.ts       |   83.33 |  100.00 |
+ src/concepts/Collecting.ts           |   94.74 |   98.90 | 19
+ src/concepts/Interpreting.ts         |   95.24 |   98.95 | 16
+ src/concepts/Reminding.ts            |   95.65 |   99.03 | 17
+ src/concepts/Sessioning.ts           |   90.00 |   89.74 | 7-10
+ src/concepts/Tracking.ts             |   95.45 |   98.72 | 14
+ src/http.ts                          |  100.00 |  100.00 |
+ src/input.ts                         |   80.00 |   96.67 | 2
+ src/migrations/dates.ts              |  100.00 |  100.00 |
+ src/photos/config.ts                 |  100.00 |  100.00 |
+ src/photos/gemini.ts                 |   91.30 |  100.00 |
+ src/photos/http.ts                   |   85.71 |   99.14 | 65
+ src/photos/image.ts                  |  100.00 |   93.33 | 10
+ src/photos/pacing.ts                 |  100.00 |  100.00 |
+ src/photos/time.ts                   |  100.00 |  100.00 |
+ src/routing.ts                       |  100.00 |  100.00 |
+ tests/helpers/application.ts         |  100.00 |  100.00 |
+ tests/helpers/db.ts                  |  100.00 |   92.59 | 18,24
+--------------------------------------|---------|---------|-------------------
 
- 60 pass
+ 313 pass
  0 fail
- 402 expect() calls
-Ran 60 tests across 16 files. [11.10s]
+ 926 expect() calls
+Ran 313 tests across 25 files. [21.64s]

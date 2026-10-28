@@ -1,3 +1,4 @@
+import { instant } from "../input.ts";
 import { type Collection, type Db } from "mongodb";
 
 export class NotProposed extends Error {}
@@ -37,6 +38,7 @@ export class InterpretingConcept {
     summary: string;
     relevantAt?: Date;
   }) {
+    if (relevantAt !== undefined) relevantAt = instant(relevantAt);
     await this.#ensureIndex();
     const interpretation = crypto.randomUUID();
     await this.interpretations.insertOne({
@@ -53,11 +55,12 @@ export class InterpretingConcept {
 
   async confirm({ interpretation }: { interpretation: string }) {
     await this.#ensureIndex();
-    const row = await this.interpretations.findOne({ _id: interpretation });
-    if (row === null || row.status !== "proposed") {
+    const changed = await this.interpretations.updateOne(
+      { _id: interpretation, status: "proposed" }, { $set: { status: "confirmed" } },
+    );
+    if (!changed.matchedCount) {
       throw new NotProposed("Only a proposed interpretation can be confirmed.");
     }
-    await this.interpretations.updateOne({ _id: interpretation }, { $set: { status: "confirmed" } });
     return { interpretation };
   }
 
@@ -73,24 +76,23 @@ export class InterpretingConcept {
     relevantAt?: Date;
   }) {
     await this.#ensureIndex();
-    const row = await this.interpretations.findOne({ _id: interpretation });
-    if (row === null || row.status !== "proposed") {
-      throw new NotProposed("Only a proposed interpretation can be revised.");
-    }
-    await this.interpretations.updateOne(
-      { _id: interpretation },
+    if (relevantAt !== undefined) relevantAt = instant(relevantAt);
+    const changed = await this.interpretations.updateOne(
+      { _id: interpretation, status: "proposed" },
       { $set: { kind, summary, relevantAt } },
     );
+    if (!changed.matchedCount) throw new NotProposed("Only a proposed interpretation can be revised.");
     return { interpretation };
   }
 
   async reject({ interpretation }: { interpretation: string }) {
     await this.#ensureIndex();
-    const row = await this.interpretations.findOne({ _id: interpretation });
-    if (row === null || row.status !== "proposed") {
+    const changed = await this.interpretations.updateOne(
+      { _id: interpretation, status: "proposed" }, { $set: { status: "rejected" } },
+    );
+    if (!changed.matchedCount) {
       throw new NotProposed("Only a proposed interpretation can be rejected.");
     }
-    await this.interpretations.updateOne({ _id: interpretation }, { $set: { status: "rejected" } });
     return { interpretation };
   }
 

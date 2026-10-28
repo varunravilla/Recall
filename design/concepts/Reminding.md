@@ -9,6 +9,18 @@ Return an item to a user's attention at a chosen future time.
 A reminder is scheduled for a tracked item. When its time arrives, due marks it due.
 Acknowledging or cancelling ends its scheduled life.
 
+**Design decisions and guarantees.**
+
+The item is opaque here. Recall binds it to a tracking, which is why resolving an
+intention can cancel its reminder without changing the original screenshot.
+Dates normalize to finite instants before storage; timezone interpretation belongs
+to the intake/UI boundary. `scheduled` can become due through the server clock,
+then acknowledged or cancelled. Rescheduling a due reminder refuses instead of
+silently hiding it. `_byItem` returns only active scheduled/due rows, while removal
+covers every historical status. SweepDue is a server maintenance operation that
+can advance all owners' reminders; only authenticated Recall routes invoke it,
+and owner-scoped read models determine which items a person sees.
+
 ## Types
 
 ```types
@@ -40,12 +52,18 @@ removeItem (user: User, item: Item) : returns (item: Item)
 
 
 schedule (user: User, item: Item, at: DateTime) : returns (reminder: Reminder)
+  where at is not a finite timestamp with a timezone
+  then
+    refuses INVALID_TIME "Use a valid timestamp with a timezone."
   where true
   then
     add a reminder with owner user, item item, at at, and status "scheduled"
     returns reminder
 
 reschedule (user: User, reminder: Reminder, at: DateTime) : returns (reminder: Reminder)
+  where at is not a finite timestamp with a timezone
+  then
+    refuses INVALID_TIME "Use a valid timestamp with a timezone."
   where reminder does not exist or user is not its owner
   then
     refuses NOT_OWNER "You do not own this reminder."
