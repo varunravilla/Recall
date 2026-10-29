@@ -140,10 +140,10 @@ test("a yearless event with inferred past dates persists as a dated proposal wit
   const response = await app.upload(account.session);
   expect(response.status).toBe(200);
   const result = await response.json() as any;
-  expect(result.status).toBe("added"); expect(result.relevantAt).toBe("2027-10-01T00:00:00.000Z");
+  expect(result.status).toBe("added"); expect(result.relevantAt).toBe("2027-10-01T04:00:00.000Z");
   const saved = await app.invoke("/recall/saved/get", { session: account.session, collection: result.collection });
   expect(saved.item.interpretationRow.status).toBe("proposed");
-  expect(new Date(saved.item.interpretationRow.relevantAt).toISOString()).toBe("2027-10-01T00:00:00.000Z");
+  expect(new Date(saved.item.interpretationRow.relevantAt).toISOString()).toBe("2027-10-01T04:00:00.000Z");
   expect(saved.item.trackingRow?.tracking ?? null).toBeNull();
   expect(saved.item.reminderRow?.reminder ?? null).toBeNull();
   expect((await app.image(account.session, result.collection)).status).toBe(200);

@@ -286,3 +286,14 @@ because an assumed current-year date has passed. The visible month/day stays in
 the caption; no future year or reminder is invented. Explicit past years still
 expire, and unrelated/private material still skips. Single and batch regressions
 check this distinction and verify the stored image and absence of reminders.
+
+### October 28: propose the next occurrence of partial dates
+
+The previous yearless-date policy saved finds without dates. It did not match the
+intended workflow for date-based offers. Recall now extracts month, optional day,
+and optional printed year separately from generated timestamps. Server calendar
+rules choose the next occurrence in the user's timezone; explicit years do not
+roll forward. A date with no day starts at the beginning of its month, or one
+minute from now during that month. Suggestions require review before tracking.
+Regression cases cover both supplied food-offer dates, other categories, month-only
+dates, expired explicit months, leap days, timezone conversion, and batch import.

@@ -61,8 +61,8 @@ behavior. Earlier key/model failures and their correction are summarized in
 
 ## Current repository checks — October 28, 2026
 
-The [saved full run](tests.txt) records **320 passing tests, zero failures, and
-961 assertions across 25 files**. Design, generated contracts, backend/Vue checks
+The [saved full run](tests.txt) records **327 passing tests, zero failures, and
+981 assertions across 25 files**. Design, generated contracts, backend/Vue checks
 and the production build pass. Five focused workflow modules retain the same
 public composition names and generated endpoint paths. The saved Bun report gives
 98.12% line coverage across loaded instrumented files. This excludes Vue templates
@@ -136,9 +136,10 @@ simulated providers; no new paid or live AI calls ran during this review.
 
 ## Yearless-date regression — October 28
 
-Single and batch imports save useful month/day screenshots without a year as
-Found, discarding inferred expiry/reminder dates. Explicit past years still skip.
-Tests verify the source image persists and no tracking or reminder is created.
-Provider tests also verify the yearless policy in the request and normalization
-before timezone conversion. These are simulated-provider checks, not a new live
-Gemini or deployed-app run.
+Single and batch imports turn useful partial dates into dated proposals. Missing
+years use the next upcoming occurrence in the user's timezone. Missing days use
+the beginning of the month or the next minute during the current month. Explicit
+past years remain excluded. Tests cover both supplied food-offer calendar dates,
+month/year dates, leap days, timezone conversion, preserved images, and review
+before tracking. These use simulated providers; recognition of the supplied
+images has not been verified against live Gemini or the deployed app.
