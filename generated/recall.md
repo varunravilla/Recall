@@ -182,7 +182,7 @@ _the authored explanation; this section records the generated shape._
 ### the action inbox book
 
 Authored path: `Recall.Inbox.InboxBook`.
-- Covered by [Recall composition](../design/compositions/Recall.md), line 148.
+- Covered by [Recall composition](../design/compositions/Recall.md), line 154.
 
 ```former
 Former "the action inbox book" — inputs (user); bindings (collection, item, content, collectedAt, interpretation, kind, summary, relevantAt, status, tracking, interpretationId, reminder, at, reminderStatus); promises exactly one record — forms:
@@ -219,7 +219,7 @@ Former "the action inbox book" — inputs (user); bindings (collection, item, co
 ### the saved item (collection)
 
 Authored path: `Recall.Saved.SavedDetail`.
-- Covered by [Recall composition](../design/compositions/Recall.md), line 150.
+- Covered by [Recall composition](../design/compositions/Recall.md), line 156.
 
 ```former
 Former "the saved item (collection)" — inputs (user, collection); bindings (item, content, collectedAt, interpretation, kind, summary, relevantAt, interpretationStatus, tracking, trackingStatus, reminder, at, reminderStatus); promises exactly one record — forms:
@@ -253,7 +253,7 @@ Former "the saved item (collection)" — inputs (user, collection); bindings (it
 ### the saved library book
 
 Authored path: `Recall.Library.LibraryBook`.
-- Covered by [Recall composition](../design/compositions/Recall.md), line 149.
+- Covered by [Recall composition](../design/compositions/Recall.md), line 155.
 
 ```former
 Former "the saved library book" — inputs (user); bindings (collection, content, collectedAt, interpretation, kind, summary, relevantAt, interpretationStatus, tracking, trackingStatus, reminder, at, reminderStatus); promises exactly one record — forms:
@@ -309,7 +309,7 @@ then
 ### Recall.CancelCompleted
 
 Authored path: `Recall.CancelCompleted`.
-- Covered by [Recall composition](../design/compositions/Recall.md), line 156.
+- Covered by [Recall composition](../design/compositions/Recall.md), line 162.
 
 ```reaction
 when Tracking.complete (tracking, user)
@@ -322,7 +322,7 @@ then
 ### Recall.CancelDismissed
 
 Authored path: `Recall.CancelDismissed`.
-- Covered by [Recall composition](../design/compositions/Recall.md), line 157.
+- Covered by [Recall composition](../design/compositions/Recall.md), line 163.
 
 ```reaction
 when Tracking.dismiss (tracking, user)
@@ -335,8 +335,8 @@ then
 ### Recall.Collecting.AddCaption
 
 Authored path: `Recall.Collecting.AddCaption`.
-- Covered by [Recall composition](../design/compositions/Recall.md), line 118.
-- Covered by [Recall composition](../design/compositions/Recall.md), line 145.
+- Covered by [Recall composition](../design/compositions/Recall.md), line 124.
+- Covered by [Recall composition](../design/compositions/Recall.md), line 151.
 
 ```reaction
 when RequestBoundary.request (collectedAt, content, item, kind, path: "/recall/captions/add", relevantAt, requestId, session, summary)
@@ -347,8 +347,8 @@ then
 ### Recall.Collecting.AddCaption#2
 
 Authored path: `Recall.Collecting.AddCaption`.
-- Covered by [Recall composition](../design/compositions/Recall.md), line 118.
-- Covered by [Recall composition](../design/compositions/Recall.md), line 145.
+- Covered by [Recall composition](../design/compositions/Recall.md), line 124.
+- Covered by [Recall composition](../design/compositions/Recall.md), line 151.
 
 ```reaction
 when Sessioning.current (session, subject: user), asked by Recall.Collecting.AddCaption
@@ -361,8 +361,8 @@ then
 ### Recall.Collecting.AddCaption#3
 
 Authored path: `Recall.Collecting.AddCaption`.
-- Covered by [Recall composition](../design/compositions/Recall.md), line 118.
-- Covered by [Recall composition](../design/compositions/Recall.md), line 145.
+- Covered by [Recall composition](../design/compositions/Recall.md), line 124.
+- Covered by [Recall composition](../design/compositions/Recall.md), line 151.
 
 ```reaction
 when Collecting.add (collectedAt, content, item, user, collection), asked by Recall.Collecting.AddCaption#2
@@ -375,8 +375,8 @@ then
 ### Recall.Collecting.AddCaption#4
 
 Authored path: `Recall.Collecting.AddCaption`.
-- Covered by [Recall composition](../design/compositions/Recall.md), line 118.
-- Covered by [Recall composition](../design/compositions/Recall.md), line 145.
+- Covered by [Recall composition](../design/compositions/Recall.md), line 124.
+- Covered by [Recall composition](../design/compositions/Recall.md), line 151.
 
 ```reaction
 when Interpreting.propose (item: collection, kind, relevantAt, summary, interpretation), asked by Recall.Collecting.AddCaption#3
@@ -389,8 +389,8 @@ then
 ### Recall.Inbox.List
 
 Authored path: `Recall.Inbox.List`.
-- Covered by [Recall composition](../design/compositions/Recall.md), line 119.
-- Covered by [Recall composition](../design/compositions/Recall.md), line 148.
+- Covered by [Recall composition](../design/compositions/Recall.md), line 125.
+- Covered by [Recall composition](../design/compositions/Recall.md), line 154.
 
 ```reaction
 when RequestBoundary.request (path: "/recall/inbox/list", requestId, session)
@@ -401,8 +401,8 @@ then
 ### Recall.Inbox.List#2
 
 Authored path: `Recall.Inbox.List`.
-- Covered by [Recall composition](../design/compositions/Recall.md), line 119.
-- Covered by [Recall composition](../design/compositions/Recall.md), line 148.
+- Covered by [Recall composition](../design/compositions/Recall.md), line 125.
+- Covered by [Recall composition](../design/compositions/Recall.md), line 154.
 
 ```reaction
 when Sessioning.current (session, subject: user), asked by Recall.Inbox.List
@@ -415,8 +415,8 @@ then
 ### Recall.Library.List
 
 Authored path: `Recall.Library.List`.
-- Covered by [Recall composition](../design/compositions/Recall.md), line 120.
-- Covered by [Recall composition](../design/compositions/Recall.md), line 149.
+- Covered by [Recall composition](../design/compositions/Recall.md), line 126.
+- Covered by [Recall composition](../design/compositions/Recall.md), line 155.
 
 ```reaction
 when RequestBoundary.request (path: "/recall/library/list", requestId, session)
@@ -427,8 +427,8 @@ then
 ### Recall.Library.List#2
 
 Authored path: `Recall.Library.List`.
-- Covered by [Recall composition](../design/compositions/Recall.md), line 120.
-- Covered by [Recall composition](../design/compositions/Recall.md), line 149.
+- Covered by [Recall composition](../design/compositions/Recall.md), line 126.
+- Covered by [Recall composition](../design/compositions/Recall.md), line 155.
 
 ```reaction
 when Sessioning.current (session, subject: user), asked by Recall.Library.List
@@ -441,8 +441,8 @@ then
 ### Recall.Photos.Add
 
 Authored path: `Recall.Photos.Add`.
-- Covered by [Recall composition](../design/compositions/Recall.md), line 133.
-- Covered by [Recall composition](../design/compositions/Recall.md), line 146.
+- Covered by [Recall composition](../design/compositions/Recall.md), line 139.
+- Covered by [Recall composition](../design/compositions/Recall.md), line 152.
 
 ```reaction
 when RequestBoundary.request (collectedAt, content, imageData, item, kind, mimeType, path: "/recall/photos/add", relevantAt, requestId, session, summary)
@@ -453,8 +453,8 @@ then
 ### Recall.Photos.Add#2
 
 Authored path: `Recall.Photos.Add`.
-- Covered by [Recall composition](../design/compositions/Recall.md), line 133.
-- Covered by [Recall composition](../design/compositions/Recall.md), line 146.
+- Covered by [Recall composition](../design/compositions/Recall.md), line 139.
+- Covered by [Recall composition](../design/compositions/Recall.md), line 152.
 
 ```reaction
 when Sessioning.current (session, subject: user), asked by Recall.Photos.Add
@@ -467,8 +467,8 @@ then
 ### Recall.Photos.Add#3
 
 Authored path: `Recall.Photos.Add`.
-- Covered by [Recall composition](../design/compositions/Recall.md), line 133.
-- Covered by [Recall composition](../design/compositions/Recall.md), line 146.
+- Covered by [Recall composition](../design/compositions/Recall.md), line 139.
+- Covered by [Recall composition](../design/compositions/Recall.md), line 152.
 
 ```reaction
 when Collecting.addPhoto (collectedAt, content, imageData, item, mimeType, user, collection), asked by Recall.Photos.Add#2
@@ -481,8 +481,8 @@ then
 ### Recall.Photos.Add#4
 
 Authored path: `Recall.Photos.Add`.
-- Covered by [Recall composition](../design/compositions/Recall.md), line 133.
-- Covered by [Recall composition](../design/compositions/Recall.md), line 146.
+- Covered by [Recall composition](../design/compositions/Recall.md), line 139.
+- Covered by [Recall composition](../design/compositions/Recall.md), line 152.
 
 ```reaction
 when Interpreting.propose (item: collection, kind, relevantAt, summary, interpretation), asked by Recall.Photos.Add#3
@@ -495,8 +495,8 @@ then
 ### Recall.Photos.Find
 
 Authored path: `Recall.Photos.Find`.
-- Covered by [Recall composition](../design/compositions/Recall.md), line 136.
-- Covered by [Recall composition](../design/compositions/Recall.md), line 147.
+- Covered by [Recall composition](../design/compositions/Recall.md), line 142.
+- Covered by [Recall composition](../design/compositions/Recall.md), line 153.
 
 ```reaction
 when RequestBoundary.request (item, path: "/recall/photos/find", requestId, session)
@@ -507,8 +507,8 @@ then
 ### Recall.Photos.Find:found#2
 
 Authored path: `Recall.Photos.Find`.
-- Covered by [Recall composition](../design/compositions/Recall.md), line 136.
-- Covered by [Recall composition](../design/compositions/Recall.md), line 147.
+- Covered by [Recall composition](../design/compositions/Recall.md), line 142.
+- Covered by [Recall composition](../design/compositions/Recall.md), line 153.
 
 ```reaction
 when Sessioning.current (session, subject: user), asked by Recall.Photos.Find
@@ -522,8 +522,8 @@ then
 ### Recall.Photos.Find:missing#2
 
 Authored path: `Recall.Photos.Find`.
-- Covered by [Recall composition](../design/compositions/Recall.md), line 136.
-- Covered by [Recall composition](../design/compositions/Recall.md), line 147.
+- Covered by [Recall composition](../design/compositions/Recall.md), line 142.
+- Covered by [Recall composition](../design/compositions/Recall.md), line 153.
 
 ```reaction
 when Sessioning.current (session, subject: user), asked by Recall.Photos.Find
@@ -537,8 +537,8 @@ then
 ### Recall.Photos.Found
 
 Authored path: `Recall.Photos.Found`.
-- Covered by [Recall composition](../design/compositions/Recall.md), line 134.
-- Covered by [Recall composition](../design/compositions/Recall.md), line 146.
+- Covered by [Recall composition](../design/compositions/Recall.md), line 140.
+- Covered by [Recall composition](../design/compositions/Recall.md), line 152.
 
 ```reaction
 when RequestBoundary.request (collectedAt, content, imageData, item, kind, mimeType, path: "/recall/photos/found", requestId, session, summary)
@@ -549,8 +549,8 @@ then
 ### Recall.Photos.Found#2
 
 Authored path: `Recall.Photos.Found`.
-- Covered by [Recall composition](../design/compositions/Recall.md), line 134.
-- Covered by [Recall composition](../design/compositions/Recall.md), line 146.
+- Covered by [Recall composition](../design/compositions/Recall.md), line 140.
+- Covered by [Recall composition](../design/compositions/Recall.md), line 152.
 
 ```reaction
 when Sessioning.current (session, subject: user), asked by Recall.Photos.Found
@@ -563,8 +563,8 @@ then
 ### Recall.Photos.Found#3
 
 Authored path: `Recall.Photos.Found`.
-- Covered by [Recall composition](../design/compositions/Recall.md), line 134.
-- Covered by [Recall composition](../design/compositions/Recall.md), line 146.
+- Covered by [Recall composition](../design/compositions/Recall.md), line 140.
+- Covered by [Recall composition](../design/compositions/Recall.md), line 152.
 
 ```reaction
 when Collecting.addPhoto (collectedAt, content, imageData, item, mimeType, user, collection), asked by Recall.Photos.Found#2
@@ -577,8 +577,8 @@ then
 ### Recall.Photos.Found#4
 
 Authored path: `Recall.Photos.Found`.
-- Covered by [Recall composition](../design/compositions/Recall.md), line 134.
-- Covered by [Recall composition](../design/compositions/Recall.md), line 146.
+- Covered by [Recall composition](../design/compositions/Recall.md), line 140.
+- Covered by [Recall composition](../design/compositions/Recall.md), line 152.
 
 ```reaction
 when Interpreting.propose (item: collection, kind, summary, interpretation), asked by Recall.Photos.Found#3
@@ -589,8 +589,8 @@ then
 ### Recall.Photos.Found#5
 
 Authored path: `Recall.Photos.Found`.
-- Covered by [Recall composition](../design/compositions/Recall.md), line 134.
-- Covered by [Recall composition](../design/compositions/Recall.md), line 146.
+- Covered by [Recall composition](../design/compositions/Recall.md), line 140.
+- Covered by [Recall composition](../design/compositions/Recall.md), line 152.
 
 ```reaction
 when Interpreting.confirm (interpretation), asked by Recall.Photos.Found#4
@@ -604,8 +604,8 @@ then
 ### Recall.Photos.Get
 
 Authored path: `Recall.Photos.Get`.
-- Covered by [Recall composition](../design/compositions/Recall.md), line 135.
-- Covered by [Recall composition](../design/compositions/Recall.md), line 147.
+- Covered by [Recall composition](../design/compositions/Recall.md), line 141.
+- Covered by [Recall composition](../design/compositions/Recall.md), line 153.
 
 ```reaction
 when RequestBoundary.request (collection, path: "/recall/photos/get", requestId, session)
@@ -616,8 +616,8 @@ then
 ### Recall.Photos.Get:found#2
 
 Authored path: `Recall.Photos.Get`.
-- Covered by [Recall composition](../design/compositions/Recall.md), line 135.
-- Covered by [Recall composition](../design/compositions/Recall.md), line 147.
+- Covered by [Recall composition](../design/compositions/Recall.md), line 141.
+- Covered by [Recall composition](../design/compositions/Recall.md), line 153.
 
 ```reaction
 when Sessioning.current (session, subject: user), asked by Recall.Photos.Get
@@ -631,8 +631,8 @@ then
 ### Recall.Photos.Get:missing#2
 
 Authored path: `Recall.Photos.Get`.
-- Covered by [Recall composition](../design/compositions/Recall.md), line 135.
-- Covered by [Recall composition](../design/compositions/Recall.md), line 147.
+- Covered by [Recall composition](../design/compositions/Recall.md), line 141.
+- Covered by [Recall composition](../design/compositions/Recall.md), line 153.
 
 ```reaction
 when Sessioning.current (session, subject: user), asked by Recall.Photos.Get
@@ -646,7 +646,7 @@ then
 ### Recall.RemoveInterpretations
 
 Authored path: `Recall.RemoveInterpretations`.
-- Covered by [Recall composition](../design/compositions/Recall.md), line 158.
+- Covered by [Recall composition](../design/compositions/Recall.md), line 164.
 
 ```reaction
 when Collecting.remove (collection, user)
@@ -659,7 +659,7 @@ then
 ### Recall.RemoveReminders
 
 Authored path: `Recall.RemoveReminders`.
-- Covered by [Recall composition](../design/compositions/Recall.md), line 160.
+- Covered by [Recall composition](../design/compositions/Recall.md), line 166.
 
 ```reaction
 when Tracking.remove (tracking, user)
@@ -670,7 +670,7 @@ then
 ### Recall.RemoveTrackings
 
 Authored path: `Recall.RemoveTrackings`.
-- Covered by [Recall composition](../design/compositions/Recall.md), line 159.
+- Covered by [Recall composition](../design/compositions/Recall.md), line 165.
 
 ```reaction
 when Interpreting.remove (interpretation)
@@ -683,8 +683,8 @@ then
 ### Recall.Review.Confirm
 
 Authored path: `Recall.Review.Confirm`.
-- Covered by [Recall composition](../design/compositions/Recall.md), line 123.
-- Covered by [Recall composition](../design/compositions/Recall.md), line 152.
+- Covered by [Recall composition](../design/compositions/Recall.md), line 129.
+- Covered by [Recall composition](../design/compositions/Recall.md), line 158.
 
 ```reaction
 when RequestBoundary.request (at, collection, interpretation, path: "/recall/review/confirm", requestId, session)
@@ -695,8 +695,8 @@ then
 ### Recall.Review.Confirm:mismatched#2
 
 Authored path: `Recall.Review.Confirm`.
-- Covered by [Recall composition](../design/compositions/Recall.md), line 123.
-- Covered by [Recall composition](../design/compositions/Recall.md), line 152.
+- Covered by [Recall composition](../design/compositions/Recall.md), line 129.
+- Covered by [Recall composition](../design/compositions/Recall.md), line 158.
 
 ```reaction
 when Sessioning.current (session, subject: user), asked by Recall.Review.Confirm
@@ -711,8 +711,8 @@ then
 ### Recall.Review.Confirm:missing#2
 
 Authored path: `Recall.Review.Confirm`.
-- Covered by [Recall composition](../design/compositions/Recall.md), line 123.
-- Covered by [Recall composition](../design/compositions/Recall.md), line 152.
+- Covered by [Recall composition](../design/compositions/Recall.md), line 129.
+- Covered by [Recall composition](../design/compositions/Recall.md), line 158.
 
 ```reaction
 when Sessioning.current (session, subject: user), asked by Recall.Review.Confirm
@@ -726,8 +726,8 @@ then
 ### Recall.Review.Confirm:owner#2
 
 Authored path: `Recall.Review.Confirm`.
-- Covered by [Recall composition](../design/compositions/Recall.md), line 123.
-- Covered by [Recall composition](../design/compositions/Recall.md), line 152.
+- Covered by [Recall composition](../design/compositions/Recall.md), line 129.
+- Covered by [Recall composition](../design/compositions/Recall.md), line 158.
 
 ```reaction
 when Sessioning.current (session, subject: user), asked by Recall.Review.Confirm
@@ -742,8 +742,8 @@ then
 ### Recall.Review.Confirm:owner#3
 
 Authored path: `Recall.Review.Confirm`.
-- Covered by [Recall composition](../design/compositions/Recall.md), line 123.
-- Covered by [Recall composition](../design/compositions/Recall.md), line 152.
+- Covered by [Recall composition](../design/compositions/Recall.md), line 129.
+- Covered by [Recall composition](../design/compositions/Recall.md), line 158.
 
 ```reaction
 when Interpreting.confirm (interpretation), asked by Recall.Review.Confirm:owner#2
@@ -756,8 +756,8 @@ then
 ### Recall.Review.Confirm:owner#4
 
 Authored path: `Recall.Review.Confirm`.
-- Covered by [Recall composition](../design/compositions/Recall.md), line 123.
-- Covered by [Recall composition](../design/compositions/Recall.md), line 152.
+- Covered by [Recall composition](../design/compositions/Recall.md), line 129.
+- Covered by [Recall composition](../design/compositions/Recall.md), line 158.
 
 ```reaction
 when Tracking.track (item: interpretation, user, tracking), asked by Recall.Review.Confirm:owner#3
@@ -770,8 +770,8 @@ then
 ### Recall.Review.Confirm:owner#5
 
 Authored path: `Recall.Review.Confirm`.
-- Covered by [Recall composition](../design/compositions/Recall.md), line 123.
-- Covered by [Recall composition](../design/compositions/Recall.md), line 152.
+- Covered by [Recall composition](../design/compositions/Recall.md), line 129.
+- Covered by [Recall composition](../design/compositions/Recall.md), line 158.
 
 ```reaction
 when Reminding.schedule (at, item: tracking, user, reminder), asked by Recall.Review.Confirm:owner#4
@@ -785,8 +785,8 @@ then
 ### Recall.Review.Get
 
 Authored path: `Recall.Review.Get`.
-- Covered by [Recall composition](../design/compositions/Recall.md), line 121.
-- Covered by [Recall composition](../design/compositions/Recall.md), line 151.
+- Covered by [Recall composition](../design/compositions/Recall.md), line 127.
+- Covered by [Recall composition](../design/compositions/Recall.md), line 157.
 
 ```reaction
 when RequestBoundary.request (collection, path: "/recall/review/get", requestId, session)
@@ -797,8 +797,8 @@ then
 ### Recall.Review.Get:found#2
 
 Authored path: `Recall.Review.Get`.
-- Covered by [Recall composition](../design/compositions/Recall.md), line 121.
-- Covered by [Recall composition](../design/compositions/Recall.md), line 151.
+- Covered by [Recall composition](../design/compositions/Recall.md), line 127.
+- Covered by [Recall composition](../design/compositions/Recall.md), line 157.
 
 ```reaction
 when Sessioning.current (session, subject: user), asked by Recall.Review.Get
@@ -813,8 +813,8 @@ then
 ### Recall.Review.Get:missing#2
 
 Authored path: `Recall.Review.Get`.
-- Covered by [Recall composition](../design/compositions/Recall.md), line 121.
-- Covered by [Recall composition](../design/compositions/Recall.md), line 151.
+- Covered by [Recall composition](../design/compositions/Recall.md), line 127.
+- Covered by [Recall composition](../design/compositions/Recall.md), line 157.
 
 ```reaction
 when Sessioning.current (session, subject: user), asked by Recall.Review.Get
@@ -828,8 +828,8 @@ then
 ### Recall.Review.Reject
 
 Authored path: `Recall.Review.Reject`.
-- Covered by [Recall composition](../design/compositions/Recall.md), line 124.
-- Covered by [Recall composition](../design/compositions/Recall.md), line 152.
+- Covered by [Recall composition](../design/compositions/Recall.md), line 130.
+- Covered by [Recall composition](../design/compositions/Recall.md), line 158.
 
 ```reaction
 when RequestBoundary.request (collection, interpretation, path: "/recall/review/reject", requestId, session)
@@ -840,8 +840,8 @@ then
 ### Recall.Review.Reject:mismatched#2
 
 Authored path: `Recall.Review.Reject`.
-- Covered by [Recall composition](../design/compositions/Recall.md), line 124.
-- Covered by [Recall composition](../design/compositions/Recall.md), line 152.
+- Covered by [Recall composition](../design/compositions/Recall.md), line 130.
+- Covered by [Recall composition](../design/compositions/Recall.md), line 158.
 
 ```reaction
 when Sessioning.current (session, subject: user), asked by Recall.Review.Reject
@@ -856,8 +856,8 @@ then
 ### Recall.Review.Reject:missing#2
 
 Authored path: `Recall.Review.Reject`.
-- Covered by [Recall composition](../design/compositions/Recall.md), line 124.
-- Covered by [Recall composition](../design/compositions/Recall.md), line 152.
+- Covered by [Recall composition](../design/compositions/Recall.md), line 130.
+- Covered by [Recall composition](../design/compositions/Recall.md), line 158.
 
 ```reaction
 when Sessioning.current (session, subject: user), asked by Recall.Review.Reject
@@ -871,8 +871,8 @@ then
 ### Recall.Review.Reject:owner#2
 
 Authored path: `Recall.Review.Reject`.
-- Covered by [Recall composition](../design/compositions/Recall.md), line 124.
-- Covered by [Recall composition](../design/compositions/Recall.md), line 152.
+- Covered by [Recall composition](../design/compositions/Recall.md), line 130.
+- Covered by [Recall composition](../design/compositions/Recall.md), line 158.
 
 ```reaction
 when Sessioning.current (session, subject: user), asked by Recall.Review.Reject
@@ -887,8 +887,8 @@ then
 ### Recall.Review.Reject:owner#3
 
 Authored path: `Recall.Review.Reject`.
-- Covered by [Recall composition](../design/compositions/Recall.md), line 124.
-- Covered by [Recall composition](../design/compositions/Recall.md), line 152.
+- Covered by [Recall composition](../design/compositions/Recall.md), line 130.
+- Covered by [Recall composition](../design/compositions/Recall.md), line 158.
 
 ```reaction
 when Interpreting.reject (interpretation), asked by Recall.Review.Reject:owner#2
@@ -901,8 +901,8 @@ then
 ### Recall.Review.Revise
 
 Authored path: `Recall.Review.Revise`.
-- Covered by [Recall composition](../design/compositions/Recall.md), line 122.
-- Covered by [Recall composition](../design/compositions/Recall.md), line 151.
+- Covered by [Recall composition](../design/compositions/Recall.md), line 128.
+- Covered by [Recall composition](../design/compositions/Recall.md), line 157.
 
 ```reaction
 when RequestBoundary.request (collection, interpretation, kind, path: "/recall/review/revise", relevantAt, requestId, session, summary)
@@ -913,8 +913,8 @@ then
 ### Recall.Review.Revise:mismatched#2
 
 Authored path: `Recall.Review.Revise`.
-- Covered by [Recall composition](../design/compositions/Recall.md), line 122.
-- Covered by [Recall composition](../design/compositions/Recall.md), line 151.
+- Covered by [Recall composition](../design/compositions/Recall.md), line 128.
+- Covered by [Recall composition](../design/compositions/Recall.md), line 157.
 
 ```reaction
 when Sessioning.current (session, subject: user), asked by Recall.Review.Revise
@@ -929,8 +929,8 @@ then
 ### Recall.Review.Revise:missing#2
 
 Authored path: `Recall.Review.Revise`.
-- Covered by [Recall composition](../design/compositions/Recall.md), line 122.
-- Covered by [Recall composition](../design/compositions/Recall.md), line 151.
+- Covered by [Recall composition](../design/compositions/Recall.md), line 128.
+- Covered by [Recall composition](../design/compositions/Recall.md), line 157.
 
 ```reaction
 when Sessioning.current (session, subject: user), asked by Recall.Review.Revise
@@ -944,8 +944,8 @@ then
 ### Recall.Review.Revise:owner#2
 
 Authored path: `Recall.Review.Revise`.
-- Covered by [Recall composition](../design/compositions/Recall.md), line 122.
-- Covered by [Recall composition](../design/compositions/Recall.md), line 151.
+- Covered by [Recall composition](../design/compositions/Recall.md), line 128.
+- Covered by [Recall composition](../design/compositions/Recall.md), line 157.
 
 ```reaction
 when Sessioning.current (session, subject: user), asked by Recall.Review.Revise
@@ -960,8 +960,8 @@ then
 ### Recall.Review.Revise:owner#3
 
 Authored path: `Recall.Review.Revise`.
-- Covered by [Recall composition](../design/compositions/Recall.md), line 122.
-- Covered by [Recall composition](../design/compositions/Recall.md), line 151.
+- Covered by [Recall composition](../design/compositions/Recall.md), line 128.
+- Covered by [Recall composition](../design/compositions/Recall.md), line 157.
 
 ```reaction
 when Interpreting.revise (interpretation, kind, relevantAt, summary), asked by Recall.Review.Revise:owner#2
@@ -974,8 +974,8 @@ then
 ### Recall.Saved.Complete
 
 Authored path: `Recall.Saved.Complete`.
-- Covered by [Recall composition](../design/compositions/Recall.md), line 126.
-- Covered by [Recall composition](../design/compositions/Recall.md), line 153.
+- Covered by [Recall composition](../design/compositions/Recall.md), line 132.
+- Covered by [Recall composition](../design/compositions/Recall.md), line 159.
 
 ```reaction
 when RequestBoundary.request (collection, path: "/recall/saved/complete", requestId, session, tracking)
@@ -986,8 +986,8 @@ then
 ### Recall.Saved.Complete:mismatched#2
 
 Authored path: `Recall.Saved.Complete`.
-- Covered by [Recall composition](../design/compositions/Recall.md), line 126.
-- Covered by [Recall composition](../design/compositions/Recall.md), line 153.
+- Covered by [Recall composition](../design/compositions/Recall.md), line 132.
+- Covered by [Recall composition](../design/compositions/Recall.md), line 159.
 
 ```reaction
 when Sessioning.current (session, subject: user), asked by Recall.Saved.Complete
@@ -1003,8 +1003,8 @@ then
 ### Recall.Saved.Complete:missing#2
 
 Authored path: `Recall.Saved.Complete`.
-- Covered by [Recall composition](../design/compositions/Recall.md), line 126.
-- Covered by [Recall composition](../design/compositions/Recall.md), line 153.
+- Covered by [Recall composition](../design/compositions/Recall.md), line 132.
+- Covered by [Recall composition](../design/compositions/Recall.md), line 159.
 
 ```reaction
 when Sessioning.current (session, subject: user), asked by Recall.Saved.Complete
@@ -1018,8 +1018,8 @@ then
 ### Recall.Saved.Complete:owner#2
 
 Authored path: `Recall.Saved.Complete`.
-- Covered by [Recall composition](../design/compositions/Recall.md), line 126.
-- Covered by [Recall composition](../design/compositions/Recall.md), line 153.
+- Covered by [Recall composition](../design/compositions/Recall.md), line 132.
+- Covered by [Recall composition](../design/compositions/Recall.md), line 159.
 
 ```reaction
 when Sessioning.current (session, subject: user), asked by Recall.Saved.Complete
@@ -1035,8 +1035,8 @@ then
 ### Recall.Saved.Complete:owner#3
 
 Authored path: `Recall.Saved.Complete`.
-- Covered by [Recall composition](../design/compositions/Recall.md), line 126.
-- Covered by [Recall composition](../design/compositions/Recall.md), line 153.
+- Covered by [Recall composition](../design/compositions/Recall.md), line 132.
+- Covered by [Recall composition](../design/compositions/Recall.md), line 159.
 
 ```reaction
 when Tracking.complete (tracking, user), asked by Recall.Saved.Complete:owner#2
@@ -1049,8 +1049,8 @@ then
 ### Recall.Saved.Delete
 
 Authored path: `Recall.Saved.Delete`.
-- Covered by [Recall composition](../design/compositions/Recall.md), line 140.
-- Covered by [Recall composition](../design/compositions/Recall.md), line 154.
+- Covered by [Recall composition](../design/compositions/Recall.md), line 146.
+- Covered by [Recall composition](../design/compositions/Recall.md), line 160.
 
 ```reaction
 when RequestBoundary.request (collection, path: "/recall/saved/delete", requestId, session)
@@ -1061,8 +1061,8 @@ then
 ### Recall.Saved.Delete#2
 
 Authored path: `Recall.Saved.Delete`.
-- Covered by [Recall composition](../design/compositions/Recall.md), line 140.
-- Covered by [Recall composition](../design/compositions/Recall.md), line 154.
+- Covered by [Recall composition](../design/compositions/Recall.md), line 146.
+- Covered by [Recall composition](../design/compositions/Recall.md), line 160.
 
 ```reaction
 when Sessioning.current (session, subject: user), asked by Recall.Saved.Delete
@@ -1075,8 +1075,8 @@ then
 ### Recall.Saved.Delete#3
 
 Authored path: `Recall.Saved.Delete`.
-- Covered by [Recall composition](../design/compositions/Recall.md), line 140.
-- Covered by [Recall composition](../design/compositions/Recall.md), line 154.
+- Covered by [Recall composition](../design/compositions/Recall.md), line 146.
+- Covered by [Recall composition](../design/compositions/Recall.md), line 160.
 
 ```reaction
 when Collecting.remove (collection, user), asked by Recall.Saved.Delete#2
@@ -1089,8 +1089,8 @@ then
 ### Recall.Saved.Dismiss
 
 Authored path: `Recall.Saved.Dismiss`.
-- Covered by [Recall composition](../design/compositions/Recall.md), line 127.
-- Covered by [Recall composition](../design/compositions/Recall.md), line 153.
+- Covered by [Recall composition](../design/compositions/Recall.md), line 133.
+- Covered by [Recall composition](../design/compositions/Recall.md), line 159.
 
 ```reaction
 when RequestBoundary.request (collection, path: "/recall/saved/dismiss", requestId, session, tracking)
@@ -1101,8 +1101,8 @@ then
 ### Recall.Saved.Dismiss:mismatched#2
 
 Authored path: `Recall.Saved.Dismiss`.
-- Covered by [Recall composition](../design/compositions/Recall.md), line 127.
-- Covered by [Recall composition](../design/compositions/Recall.md), line 153.
+- Covered by [Recall composition](../design/compositions/Recall.md), line 133.
+- Covered by [Recall composition](../design/compositions/Recall.md), line 159.
 
 ```reaction
 when Sessioning.current (session, subject: user), asked by Recall.Saved.Dismiss
@@ -1118,8 +1118,8 @@ then
 ### Recall.Saved.Dismiss:missing#2
 
 Authored path: `Recall.Saved.Dismiss`.
-- Covered by [Recall composition](../design/compositions/Recall.md), line 127.
-- Covered by [Recall composition](../design/compositions/Recall.md), line 153.
+- Covered by [Recall composition](../design/compositions/Recall.md), line 133.
+- Covered by [Recall composition](../design/compositions/Recall.md), line 159.
 
 ```reaction
 when Sessioning.current (session, subject: user), asked by Recall.Saved.Dismiss
@@ -1133,8 +1133,8 @@ then
 ### Recall.Saved.Dismiss:owner#2
 
 Authored path: `Recall.Saved.Dismiss`.
-- Covered by [Recall composition](../design/compositions/Recall.md), line 127.
-- Covered by [Recall composition](../design/compositions/Recall.md), line 153.
+- Covered by [Recall composition](../design/compositions/Recall.md), line 133.
+- Covered by [Recall composition](../design/compositions/Recall.md), line 159.
 
 ```reaction
 when Sessioning.current (session, subject: user), asked by Recall.Saved.Dismiss
@@ -1150,8 +1150,8 @@ then
 ### Recall.Saved.Dismiss:owner#3
 
 Authored path: `Recall.Saved.Dismiss`.
-- Covered by [Recall composition](../design/compositions/Recall.md), line 127.
-- Covered by [Recall composition](../design/compositions/Recall.md), line 153.
+- Covered by [Recall composition](../design/compositions/Recall.md), line 133.
+- Covered by [Recall composition](../design/compositions/Recall.md), line 159.
 
 ```reaction
 when Tracking.dismiss (tracking, user), asked by Recall.Saved.Dismiss:owner#2
@@ -1164,8 +1164,8 @@ then
 ### Recall.Saved.Get
 
 Authored path: `Recall.Saved.Get`.
-- Covered by [Recall composition](../design/compositions/Recall.md), line 125.
-- Covered by [Recall composition](../design/compositions/Recall.md), line 150.
+- Covered by [Recall composition](../design/compositions/Recall.md), line 131.
+- Covered by [Recall composition](../design/compositions/Recall.md), line 156.
 
 ```reaction
 when RequestBoundary.request (collection, path: "/recall/saved/get", requestId, session)
@@ -1176,8 +1176,8 @@ then
 ### Recall.Saved.Get:found#2
 
 Authored path: `Recall.Saved.Get`.
-- Covered by [Recall composition](../design/compositions/Recall.md), line 125.
-- Covered by [Recall composition](../design/compositions/Recall.md), line 150.
+- Covered by [Recall composition](../design/compositions/Recall.md), line 131.
+- Covered by [Recall composition](../design/compositions/Recall.md), line 156.
 
 ```reaction
 when Sessioning.current (session, subject: user), asked by Recall.Saved.Get
@@ -1191,8 +1191,8 @@ then
 ### Recall.Saved.Get:missing#2
 
 Authored path: `Recall.Saved.Get`.
-- Covered by [Recall composition](../design/compositions/Recall.md), line 125.
-- Covered by [Recall composition](../design/compositions/Recall.md), line 150.
+- Covered by [Recall composition](../design/compositions/Recall.md), line 131.
+- Covered by [Recall composition](../design/compositions/Recall.md), line 156.
 
 ```reaction
 when Sessioning.current (session, subject: user), asked by Recall.Saved.Get
@@ -1206,8 +1206,8 @@ then
 ### Recall.Saved.Reschedule
 
 Authored path: `Recall.Saved.Reschedule`.
-- Covered by [Recall composition](../design/compositions/Recall.md), line 128.
-- Covered by [Recall composition](../design/compositions/Recall.md), line 154.
+- Covered by [Recall composition](../design/compositions/Recall.md), line 134.
+- Covered by [Recall composition](../design/compositions/Recall.md), line 160.
 
 ```reaction
 when RequestBoundary.request (at, collection, path: "/recall/saved/reschedule", requestId, session, tracking)
@@ -1218,8 +1218,8 @@ then
 ### Recall.Saved.Reschedule:mismatched#2
 
 Authored path: `Recall.Saved.Reschedule`.
-- Covered by [Recall composition](../design/compositions/Recall.md), line 128.
-- Covered by [Recall composition](../design/compositions/Recall.md), line 154.
+- Covered by [Recall composition](../design/compositions/Recall.md), line 134.
+- Covered by [Recall composition](../design/compositions/Recall.md), line 160.
 
 ```reaction
 when Sessioning.current (session, subject: user), asked by Recall.Saved.Reschedule
@@ -1235,8 +1235,8 @@ then
 ### Recall.Saved.Reschedule:missing#2
 
 Authored path: `Recall.Saved.Reschedule`.
-- Covered by [Recall composition](../design/compositions/Recall.md), line 128.
-- Covered by [Recall composition](../design/compositions/Recall.md), line 154.
+- Covered by [Recall composition](../design/compositions/Recall.md), line 134.
+- Covered by [Recall composition](../design/compositions/Recall.md), line 160.
 
 ```reaction
 when Sessioning.current (session, subject: user), asked by Recall.Saved.Reschedule
@@ -1250,8 +1250,8 @@ then
 ### Recall.Saved.Reschedule:noReminder#2
 
 Authored path: `Recall.Saved.Reschedule`.
-- Covered by [Recall composition](../design/compositions/Recall.md), line 128.
-- Covered by [Recall composition](../design/compositions/Recall.md), line 154.
+- Covered by [Recall composition](../design/compositions/Recall.md), line 134.
+- Covered by [Recall composition](../design/compositions/Recall.md), line 160.
 
 ```reaction
 when Sessioning.current (session, subject: user), asked by Recall.Saved.Reschedule
@@ -1268,8 +1268,8 @@ then
 ### Recall.Saved.Reschedule:owner#2
 
 Authored path: `Recall.Saved.Reschedule`.
-- Covered by [Recall composition](../design/compositions/Recall.md), line 128.
-- Covered by [Recall composition](../design/compositions/Recall.md), line 154.
+- Covered by [Recall composition](../design/compositions/Recall.md), line 134.
+- Covered by [Recall composition](../design/compositions/Recall.md), line 160.
 
 ```reaction
 when Sessioning.current (session, subject: user), asked by Recall.Saved.Reschedule
@@ -1286,8 +1286,8 @@ then
 ### Recall.Saved.Reschedule:owner#3
 
 Authored path: `Recall.Saved.Reschedule`.
-- Covered by [Recall composition](../design/compositions/Recall.md), line 128.
-- Covered by [Recall composition](../design/compositions/Recall.md), line 154.
+- Covered by [Recall composition](../design/compositions/Recall.md), line 134.
+- Covered by [Recall composition](../design/compositions/Recall.md), line 160.
 
 ```reaction
 when Reminding.reschedule (at, reminder, user), asked by Recall.Saved.Reschedule:owner#2
@@ -1300,8 +1300,8 @@ then
 ### Recall.Sweep.Tick
 
 Authored path: `Recall.Sweep.Tick`.
-- Covered by [Recall composition](../design/compositions/Recall.md), line 129.
-- Covered by [Recall composition](../design/compositions/Recall.md), line 155.
+- Covered by [Recall composition](../design/compositions/Recall.md), line 135.
+- Covered by [Recall composition](../design/compositions/Recall.md), line 161.
 
 ```reaction
 when RequestBoundary.request (path: "/recall/sweep/tick", requestId, session)
@@ -1312,8 +1312,8 @@ then
 ### Recall.Sweep.Tick#2
 
 Authored path: `Recall.Sweep.Tick`.
-- Covered by [Recall composition](../design/compositions/Recall.md), line 129.
-- Covered by [Recall composition](../design/compositions/Recall.md), line 155.
+- Covered by [Recall composition](../design/compositions/Recall.md), line 135.
+- Covered by [Recall composition](../design/compositions/Recall.md), line 161.
 
 ```reaction
 when Sessioning.current (session, subject: user), asked by Recall.Sweep.Tick
@@ -1326,8 +1326,8 @@ then
 ### Recall.Sweep.Tick#3
 
 Authored path: `Recall.Sweep.Tick`.
-- Covered by [Recall composition](../design/compositions/Recall.md), line 129.
-- Covered by [Recall composition](../design/compositions/Recall.md), line 155.
+- Covered by [Recall composition](../design/compositions/Recall.md), line 135.
+- Covered by [Recall composition](../design/compositions/Recall.md), line 161.
 
 ```reaction
 when Reminding.sweepDue (now, count), asked by Recall.Sweep.Tick#2

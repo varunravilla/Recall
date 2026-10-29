@@ -94,3 +94,10 @@ full test results. Tests use simulated provider responses and disposable MongoDB
 concert fixtures; it needs network access and a key. The existing live result
 used two unique images in one request; it does not establish ten-image throughput
 or a complete browser journey. Historical OCR results describe removed code.
+
+### Dates without a year
+
+A visible month/day without a stated year is treated as not proven expired.
+Recall saves a useful screenshot as Found, preserves the visible date in its
+caption, and creates no reminder. It neither assumes the current year nor rolls
+the date into next year. Dates with an explicit past year remain excluded.

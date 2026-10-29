@@ -133,6 +133,42 @@ test("undated finds retain image and caption without a reminder or fabricated da
   expect(inbox.book.due).toHaveLength(0);
 });
 
+test("a yearless event with inferred past dates persists as Found with its source image", async () => {
+  const app = setup(async () => ({ ...future, dateYearMissing: true, caption: "October 1 concert, no year shown",
+    relevantAt: "2026-10-01T10:00:00Z", expiresAt: "2026-10-01T23:00:00Z" }));
+  const account = await app.account();
+  const response = await app.upload(account.session);
+  expect(response.status).toBe(200);
+  const result = await response.json() as any;
+  expect(result.status).toBe("added"); expect(result.relevantAt).toBeNull();
+  const saved = await app.invoke("/recall/saved/get", { session: account.session, collection: result.collection });
+  expect(saved.item.interpretationRow.status).toBe("confirmed");
+  expect(saved.item.interpretationRow.relevantAt).toBeNull();
+  expect(saved.item.trackingRow?.tracking ?? null).toBeNull();
+  expect(saved.item.reminderRow?.reminder ?? null).toBeNull();
+  expect((await app.image(account.session, result.collection)).status).toBe(200);
+});
+
+test("batch distinguishes a yearless date from an explicitly expired year", async () => {
+  const past = { ...future, relevantAt: "2025-10-01T10:00:00Z", expiresAt: "2025-10-01T23:00:00Z" };
+  const app = setup(async () => future, () => now, async ({ images }) => images.map((image, index) => ({
+    id: image.id, analysis: { ...past, dateYearMissing: index === 0 },
+  })));
+  const account = await app.account();
+  const form = new FormData();
+  form.set("session", account.session); form.set("consent", "gemini"); form.set("timezone", "UTC");
+  form.set("ids", JSON.stringify(["yearless", "explicit"]));
+  form.append("images", new Blob([fixture], { type: "image/png" }), "yearless.png");
+  form.append("images", new Blob([await Bun.file(new URL("../fixtures/expired-concert.png", import.meta.url)).arrayBuffer()], { type: "image/png" }), "explicit.png");
+  const response = await app.handle(new Request("http://localhost/api/recall/photos/import-batch", { method: "POST", body: form }));
+  expect(response.status).toBe(200);
+  const result = await response.json() as any;
+  expect(result.results.map((row: any) => row.status)).toEqual(["added", "skipped"]);
+  expect(result.results[0].relevantAt).toBeNull();
+  expect(result.results[1].reason).toContain("expired");
+  expect(await app.collecting._byOwner({ user: account.user })).toHaveLength(1);
+});
+
 // Inference can finish after logout. The second session check must prevent storage.
 test("logout during inference writes neither a dated item nor an undated find", async () => {
   for (const undated of [false, true]) {

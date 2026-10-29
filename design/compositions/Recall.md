@@ -94,6 +94,12 @@ or uncertain dated results are skipped. Image hashes deduplicate within one owne
 not across accounts. Raw Add and Found write endpoints are gateway-internal and
 blocked by the production HTTP router; public clients use multipart import.
 
+A visible month/day without a year is not evidence of expiration. The analyzer
+marks that case with `dateYearMissing`. The adapter discards inferred reminder
+and expiry timestamps and saves an otherwise useful image as Found. It does not
+assume the current year or roll the event into next year. Explicit past years
+still expire, and unrelated or sensitive content remains excluded.
+
 Ten optimized images fit within the batch limit. The client prepares one batch
 ahead, allows further selections during processing, and rechecks the live queue
 before finishing. Pause stops new requests after the active batch. Reloading loses

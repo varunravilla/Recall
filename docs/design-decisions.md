@@ -275,3 +275,14 @@ P4 preserves P3's typography and palette. Error responses now use actionable UI
 messages instead of uppercase transport codes. A final design summary connects
 these choices to P1 and P3 and links those historical versions by commit. P5
 participant tasks are prepared, but no user sessions or findings are invented.
+
+## October 28, 2026: do not expire a date without a year
+
+A month/day screenshot was skipped after analysis supplied a past year that was
+not visible in the image. Missing year evidence now has an explicit analyzer flag.
+For that case, parsing discards generated reminder and expiry times and preserves
+an otherwise useful item as Found. The prompt tells the analyzer not to reject it
+because an assumed current-year date has passed. The visible month/day stays in
+the caption; no future year or reminder is invented. Explicit past years still
+expire, and unrelated/private material still skips. Single and batch regressions
+check this distinction and verify the stored image and absence of reminders.

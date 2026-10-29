@@ -2,6 +2,29 @@ import { expect, test } from "bun:test";
 import { createGeminiAnalyzer, exclusionReason, parseAnalysis, PhotoImportError, type PhotoAnalysis } from "../../src/photos/gemini.ts";
 export const now = new Date("2026-10-18T16:00:00Z");
 export const future: PhotoAnalysis = { actionable: true, caption: "The Late Train concert in Cambridge on November 15, 2026.", kind: "event", summary: "Buy The Late Train tickets", relevantAt: "2026-11-01T10:00:00-05:00", expiresAt: "2026-11-14T23:00:00-05:00", dateConfidence: "explicit", reason: "Ticket sales have not opened yet." };
+for (const kind of ["event", "place", "product"] as const) test(`yearless ${kind} is kept even when an inferred month/day fell earlier this year`, () => {
+  const raw = { ...future, kind, caption: "October 1 launch", dateYearMissing: true,
+    relevantAt: "2026-10-01T10:00:00Z", expiresAt: "2026-10-01T23:00:00Z" };
+  const parsed = parseAnalysis(raw);
+  expect(parsed.relevantAt).toBeNull(); expect(parsed.expiresAt).toBeNull();
+  expect(parsed.caption).toBe("October 1 launch"); expect(parsed.dateConfidence).toBe("uncertain");
+  expect(exclusionReason(raw, now)).toBeNull();
+});
+test("an explicit past year still expires and missing-year metadata cannot revive unrelated content", () => {
+  expect(exclusionReason({ ...future, dateYearMissing: false, expiresAt: "2025-10-01T00:00:00Z" }, now)).toContain("expired");
+  expect(exclusionReason({ ...future, dateYearMissing: true, actionable: false, reason: "Private document" }, now)).toBe("Private document");
+  expect(() => parseAnalysis({ ...future, dateYearMissing: "true" })).toThrow(PhotoImportError);
+});
+test("single-image analyzer discards inferred dates for a yearless event before timezone conversion", async () => {
+  const fetcher = async (_url: unknown, init?: RequestInit) => {
+    const prompt = JSON.parse(String(init?.body)).systemInstruction.parts[0].text;
+    expect(prompt).toContain("do not infer the current year");
+    return Response.json({ candidates: [{ finishReason: "STOP", content: { parts: [{ text: JSON.stringify({ ...future, dateYearMissing: true, relevantAt: "2026-10-01T10:00:00", expiresAt: "2026-10-01T23:00:00" }) }] } }] });
+  };
+  const result = await createGeminiAnalyzer({ apiKey: "synthetic", fetcher })({ imageData: "aA==", mimeType: "image/png", now, timezone: "America/New_York" });
+  expect(result.relevantAt).toBeNull(); expect(result.expiresAt).toBeNull();
+  expect(exclusionReason(result, now)).toBeNull();
+});
 test("filter rejects expired, irrelevant, uncertain, missing, invalid, past, and incoherent dates", () => {
   expect(exclusionReason(future, now)).toBeNull();
   for (const patch of [

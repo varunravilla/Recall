@@ -59,10 +59,10 @@ checks send only synthetic fixtures; they do not establish browser or deployment
 behavior. Earlier key/model failures and their correction are summarized in
 [the redacted diagnostic record](gemini-live.txt).
 
-## Current repository checks — October 26, 2026
+## Current repository checks — October 28, 2026
 
-The [saved full run](tests.txt) records **313 passing tests, zero failures, and
-926 assertions across 25 files**. Design, generated contracts, backend/Vue checks
+The [saved full run](tests.txt) records **320 passing tests, zero failures, and
+961 assertions across 25 files**. Design, generated contracts, backend/Vue checks
 and the production build pass. Five focused workflow modules retain the same
 public composition names and generated endpoint paths. The saved Bun report gives
 98.12% line coverage across loaded instrumented files. This excludes Vue templates
@@ -133,3 +133,12 @@ explicit tests that raw internal photo writes never reach an action. Transition
 tests include every deletion state, competing complete/dismiss requests, exact
 expiry and attempted owner-field impersonation. Tests use synthetic data and
 simulated providers; no new paid or live AI calls ran during this review.
+
+## Yearless-date regression — October 28
+
+Single and batch imports save useful month/day screenshots without a year as
+Found, discarding inferred expiry/reminder dates. Explicit past years still skip.
+Tests verify the source image persists and no tracking or reminder is created.
+Provider tests also verify the yearless policy in the request and normalization
+before timezone conversion. These are simulated-provider checks, not a new live
+Gemini or deployed-app run.
