@@ -1,6 +1,6 @@
 import { geminiConfig } from "./config.ts";
 import type { createGateway } from "@mit-sdg/sync-engine/boundary";
-import { createGeminiAnalyzer, createGeminiBatchAnalyzer, exclusionReason, parseAnalysis, parseBatch, PhotoImportError, type AnalyzePhoto, type AnalyzePhotos } from "./gemini.ts";
+import { createGeminiAnalyzer, createGeminiBatchAnalyzer, exclusionReason, resolvePartialDate, parseAnalysis, parseBatch, PhotoImportError, type AnalyzePhoto, type AnalyzePhotos } from "./gemini.ts";
 import { MAX_IMAGE_BYTES, MAX_PHOTOS_PER_BATCH, MAX_BATCH_IMAGE_BYTES, MAX_IMPORT_BODY_BYTES, validImage } from "./image.ts";
 import { PhotoPacer } from "./pacing.ts";
 type Gateway = ReturnType<typeof createGateway>;
@@ -93,7 +93,7 @@ export function createPhotoHandler({ gateway, analyze = createGeminiAnalyzer(), 
         const byId = new Map(verified.map(r => [r.id, r.analysis]));
         pacer.success();
         for (const image of pending) {
-          const analysis = parseAnalysis(byId.get(image.id));
+          const analysis = resolvePartialDate(parseAnalysis(byId.get(image.id)), clock(), timezone);
           const reason = exclusionReason(analysis, clock());
           if (reason) { results.set(image.id, { id: image.id, status: "skipped", reason }); continue; }
           // Each write re-authenticates after inference; logout cannot write a find.

@@ -94,11 +94,12 @@ or uncertain dated results are skipped. Image hashes deduplicate within one owne
 not across accounts. Raw Add and Found write endpoints are gateway-internal and
 blocked by the production HTTP router; public clients use multipart import.
 
-A visible month/day without a year is not evidence of expiration. The analyzer
-marks that case with `dateYearMissing`. The adapter discards inferred reminder
-and expiry timestamps and saves an otherwise useful image as Found. It does not
-assume the current year or roll the event into next year. Explicit past years
-still expire, and unrelated or sensitive content remains excluded.
+A date without a year uses its next upcoming occurrence in the user's timezone.
+A month/day rolls to next year only when that day has ended; an ongoing day gets
+a reminder one minute from now. A month without a day uses the first day of that
+month, or one minute from now if the specified month is already underway.
+The server resolves these inferred dates, and the user reviews them before saving.
+Explicit years are never rolled forward. Undated finds still have no reminder.
 
 Ten optimized images fit within the batch limit. The client prepares one batch
 ahead, allows further selections during processing, and rechecks the live queue

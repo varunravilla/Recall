@@ -133,17 +133,17 @@ test("undated finds retain image and caption without a reminder or fabricated da
   expect(inbox.book.due).toHaveLength(0);
 });
 
-test("a yearless event with inferred past dates persists as Found with its source image", async () => {
+test("a yearless event with inferred past dates persists as a dated proposal with its source image", async () => {
   const app = setup(async () => ({ ...future, dateYearMissing: true, caption: "October 1 concert, no year shown",
     relevantAt: "2026-10-01T10:00:00Z", expiresAt: "2026-10-01T23:00:00Z" }));
   const account = await app.account();
   const response = await app.upload(account.session);
   expect(response.status).toBe(200);
   const result = await response.json() as any;
-  expect(result.status).toBe("added"); expect(result.relevantAt).toBeNull();
+  expect(result.status).toBe("added"); expect(result.relevantAt).toBe("2027-10-01T00:00:00.000Z");
   const saved = await app.invoke("/recall/saved/get", { session: account.session, collection: result.collection });
-  expect(saved.item.interpretationRow.status).toBe("confirmed");
-  expect(saved.item.interpretationRow.relevantAt).toBeNull();
+  expect(saved.item.interpretationRow.status).toBe("proposed");
+  expect(new Date(saved.item.interpretationRow.relevantAt).toISOString()).toBe("2027-10-01T00:00:00.000Z");
   expect(saved.item.trackingRow?.tracking ?? null).toBeNull();
   expect(saved.item.reminderRow?.reminder ?? null).toBeNull();
   expect((await app.image(account.session, result.collection)).status).toBe(200);
@@ -164,7 +164,7 @@ test("batch distinguishes a yearless date from an explicitly expired year", asyn
   expect(response.status).toBe(200);
   const result = await response.json() as any;
   expect(result.results.map((row: any) => row.status)).toEqual(["added", "skipped"]);
-  expect(result.results[0].relevantAt).toBeNull();
+  expect(result.results[0].relevantAt).toBe("2027-10-01T00:00:00.000Z");
   expect(result.results[1].reason).toContain("expired");
   expect(await app.collecting._byOwner({ user: account.user })).toHaveLength(1);
 });

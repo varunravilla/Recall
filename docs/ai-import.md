@@ -97,7 +97,9 @@ or a complete browser journey. Historical OCR results describe removed code.
 
 ### Dates without a year
 
-A visible month/day without a stated year is treated as not proven expired.
-Recall saves a useful screenshot as Found, preserves the visible date in its
-caption, and creates no reminder. It neither assumes the current year nor rolls
-the date into next year. Dates with an explicit past year remain excluded.
+Partial dates become suggestions for review. A month/day with no year uses its next
+upcoming occurrence in the user's timezone. A month/year without a day uses the
+first day of that month, or one minute from now if the month is already underway.
+A date-only offer remains eligible through the end of its day. Inferred dates are
+not proof an offer is current; users review the proposed date before saving.
+Explicit past years and fully elapsed explicit months remain excluded.

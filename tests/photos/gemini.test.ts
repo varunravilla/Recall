@@ -1,28 +1,28 @@
 import { expect, test } from "bun:test";
-import { createGeminiAnalyzer, exclusionReason, parseAnalysis, PhotoImportError, type PhotoAnalysis } from "../../src/photos/gemini.ts";
+import { createGeminiAnalyzer, exclusionReason, resolvePartialDate, parseAnalysis, PhotoImportError, type PhotoAnalysis } from "../../src/photos/gemini.ts";
 export const now = new Date("2026-10-18T16:00:00Z");
 export const future: PhotoAnalysis = { actionable: true, caption: "The Late Train concert in Cambridge on November 15, 2026.", kind: "event", summary: "Buy The Late Train tickets", relevantAt: "2026-11-01T10:00:00-05:00", expiresAt: "2026-11-14T23:00:00-05:00", dateConfidence: "explicit", reason: "Ticket sales have not opened yet." };
 for (const kind of ["event", "place", "product"] as const) test(`yearless ${kind} is kept even when an inferred month/day fell earlier this year`, () => {
   const raw = { ...future, kind, caption: "October 1 launch", dateYearMissing: true,
     relevantAt: "2026-10-01T10:00:00Z", expiresAt: "2026-10-01T23:00:00Z" };
-  const parsed = parseAnalysis(raw);
-  expect(parsed.relevantAt).toBeNull(); expect(parsed.expiresAt).toBeNull();
-  expect(parsed.caption).toBe("October 1 launch"); expect(parsed.dateConfidence).toBe("uncertain");
-  expect(exclusionReason(raw, now)).toBeNull();
+  const parsed = resolvePartialDate(parseAnalysis(raw), now, "UTC");
+  expect(parsed.relevantAt).toBe("2027-10-01T00:00:00.000Z"); expect(parsed.expiresAt).toBe("2027-10-01T23:59:59.000Z");
+  expect(parsed.caption).toBe("October 1 launch"); expect(parsed.dateConfidence).toBe("inferred");
+  expect(exclusionReason(parsed, now)).toBeNull();
 });
 test("an explicit past year still expires and missing-year metadata cannot revive unrelated content", () => {
   expect(exclusionReason({ ...future, dateYearMissing: false, expiresAt: "2025-10-01T00:00:00Z" }, now)).toContain("expired");
   expect(exclusionReason({ ...future, dateYearMissing: true, actionable: false, reason: "Private document" }, now)).toBe("Private document");
   expect(() => parseAnalysis({ ...future, dateYearMissing: "true" })).toThrow(PhotoImportError);
 });
-test("single-image analyzer discards inferred dates for a yearless event before timezone conversion", async () => {
+test("single-image analyzer resolves next occurrence in the user timezone", async () => {
   const fetcher = async (_url: unknown, init?: RequestInit) => {
     const prompt = JSON.parse(String(init?.body)).systemInstruction.parts[0].text;
-    expect(prompt).toContain("do not infer the current year");
+    expect(prompt).toContain("Do not infer a year");
     return Response.json({ candidates: [{ finishReason: "STOP", content: { parts: [{ text: JSON.stringify({ ...future, dateYearMissing: true, relevantAt: "2026-10-01T10:00:00", expiresAt: "2026-10-01T23:00:00" }) }] } }] });
   };
   const result = await createGeminiAnalyzer({ apiKey: "synthetic", fetcher })({ imageData: "aA==", mimeType: "image/png", now, timezone: "America/New_York" });
-  expect(result.relevantAt).toBeNull(); expect(result.expiresAt).toBeNull();
+  expect(result.relevantAt).toBe("2027-10-01T04:00:00.000Z"); expect(result.expiresAt).toBe("2027-10-02T03:59:59.000Z");
   expect(exclusionReason(result, now)).toBeNull();
 });
 test("filter rejects expired, irrelevant, uncertain, missing, invalid, past, and incoherent dates", () => {
@@ -51,7 +51,7 @@ test("Gemini receives image, server time, timezone, structured schema, and a ser
   const body = JSON.parse(String(captured?.body));
   expect(body.systemInstruction.parts[0].text).toContain(now.toISOString());
   expect(body.systemInstruction.parts[0].text).toContain("America/New_York");
-  expect(body.systemInstruction.parts[0].text).toContain("Never move a past event into next year");
+  expect(body.systemInstruction.parts[0].text).toContain("Explicit past years must not roll forward");
   expect(body.contents[0].parts[0].inlineData).toEqual({ mimeType: "image/png", data: "aGVsbG8=" });
   expect(String(captured?.body)).not.toContain("test-key");
 });
@@ -129,4 +129,23 @@ test("provider supports ten independent photos and refuses an eleventh before se
   expect(await analyze({ images, now, timezone: "UTC" })).toHaveLength(10);
   await expect(analyze({ images: [...images, { ...images[0]!, id: "extra" }], now, timezone: "UTC" })).rejects.toBeInstanceOf(PhotoImportError);
   expect(calls).toBe(1);
+});
+
+for (const [label, date, expected] of [
+  ["Halloween offers", { month: 10, day: 31, year: null }, "2026-10-31T04:00:00.000Z"],
+  ["November food offers", { month: 11, day: 16, year: null }, "2026-11-16T05:00:00.000Z"],
+  ["month and year", { month: 11, day: null, year: 2026 }, "2026-11-01T04:00:00.000Z"],
+  ["current month", { month: 10, day: null, year: 2026 }, "2026-10-29T03:11:00.000Z"],
+  ["past month without year", { month: 9, day: null, year: null }, "2027-09-01T04:00:00.000Z"],
+  ["leap day", { month: 2, day: 29, year: null }, "2028-02-29T05:00:00.000Z"],
+] as const) test(`partial date: ${label}`, () => {
+  const clock = new Date("2026-10-29T03:10:00Z");
+  const result = resolvePartialDate({ ...future, visibleDate: date, dateYearMissing: date.year === null }, clock, "America/New_York");
+  expect(result.relevantAt).toBe(expected);
+  expect(result.dateConfidence).toBe("inferred");
+  expect(exclusionReason(result, clock)).toBeNull();
+});
+test("explicit expired months are not rolled forward; invalid source dates are rejected", () => {
+  expect(resolvePartialDate({ ...future, visibleDate: { month: 9, day: null, year: 2026 } }, now, "UTC").actionable).toBe(false);
+  expect(() => parseAnalysis({ ...future, visibleDate: { month: 2, day: 30, year: null } })).toThrow(PhotoImportError);
 });
